@@ -38,24 +38,7 @@ class NeuralNetwork {
   }
 
   train(inputs, target) {
-    for (let i = 0; i < this.hiddenSize; i++) {
-      this.hiddenLayer[i] = 0;
-      for (let j = 0; j < this.inputSize; j++) {
-        this.hiddenLayer[i] += this.weightsInputToHidden[i][j] * inputs[j];
-      }
-      this.hiddenLayer[i] += this.biasHidden[i];
-      this.hiddenLayer[i] = sigmoid(this.hiddenLayer[i]);
-    }
-
-    const output = new Array(this.outputSize);
-    for (let i = 0; i < this.outputSize; i++) {
-      output[i] = 0;
-      for (let j = 0; j < this.hiddenSize; j++) {
-        output[i] += this.weightsHiddenToOutput[i][j] * this.hiddenLayer[j];
-      }
-      output[i] += this.biasOutput[i];
-      output[i] = sigmoid(output[i]);
-    }
+    const output = this.feedForward(inputs);
 
     const errorsOutput = new Array(this.outputSize);
     const errorsHidden = new Array(this.hiddenSize);
