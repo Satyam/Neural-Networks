@@ -37,32 +37,29 @@ class NeuralNetwork {
   train(inputs, target) {
     const output = this.feedForward(inputs);
 
-    // const errorsOutput = new Array(this.outputSize);
-    const errorsHidden = new Array(this.hiddenSize);
-
     const errorsOutput = output.map((o, i) => {
-      let e = target[i] - o;
+      let errOut = target[i] - o;
+      const weightFactor = this.learningRate * errOut * o * (1 - o);
       for (let j = 0; j < this.hiddenSize; j++) {
-        this.weightsHiddenToOutput[i][j] +=
-          this.learningRate * e * o * (1 - o) * this.hiddenLayer[j];
+        this.weightsHiddenToOutput[i][j] += weightFactor * this.hiddenLayer[j];
       }
-      this.biasOutput[i] += this.learningRate * e;
-      return e;
+      this.biasOutput[i] += this.learningRate * errOut;
+      return errOut;
     });
 
     for (let i = 0; i < this.hiddenSize; i++) {
-      errorsHidden[i] = 0;
+      let errHidden = 0;
       for (let j = 0; j < this.outputSize; j++) {
-        errorsHidden[i] += this.weightsHiddenToOutput[j][i] * errorsOutput[j];
+        errHidden += this.weightsHiddenToOutput[j][i] * errorsOutput[j];
       }
-      this.biasHidden[i] += this.learningRate * errorsHidden[i];
+      this.biasHidden[i] += this.learningRate * errHidden;
+      const factor =
+        this.learningRate *
+        errHidden *
+        this.hiddenLayer[i] *
+        (1 - this.hiddenLayer[i]);
       for (let j = 0; j < this.inputSize; j++) {
-        this.weightsInputToHidden[i][j] +=
-          this.learningRate *
-          errorsHidden[i] *
-          this.hiddenLayer[i] *
-          (1 - this.hiddenLayer[i]) *
-          inputs[j];
+        this.weightsInputToHidden[i][j] += factor * inputs[j];
       }
     }
   }
