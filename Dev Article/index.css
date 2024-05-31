@@ -1,0 +1,21 @@
+label {
+  display: block;
+  padding: 10px;
+}
+a {
+  display: block;
+  margin-bottom: 20px;
+}
+.controls {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+}
+
+body {
+  padding: 20px;
+}
+
+canvas {
+  outline: 2px solid #666;
+}

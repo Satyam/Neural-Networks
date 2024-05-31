@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <a href="#controls">Jump to controls</a>
+    <canvas id="graph" width="600" height="600"></canvas>
+    <div class="controls" id="controls">
+      <button onclick="initialise()">initialise</button>
+      <button onclick="train()">Train</button>
+      <button onclick="classifyPoints()">Classify Points</button>
+      <button onclick="visualizeNeuronsAndWeights()">
+        Visualize Neurons and Weights
+      </button>
+    </div>
+    <label
+      >Training Data Size
+      <input id="trainingDataSize" value="5000" />
+    </label>
+    <label
+      >training iterations
+      <input id="trainingIterations" value="50000" />
+    </label>
+    <label
+      >Learning Rate
+      <input id="learningRate" value="0.03" />
+    </label>
+    <label
+      >hidden nodes (more than 2!)
+      <input id="hiddenNodes" value="8" />
+    </label>
+    <label
+      >points to classify
+      <input id="numPoints" value="400" />
+    </label>
+    <script src="neuralNetwork.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
