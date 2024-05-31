@@ -16,45 +16,39 @@ class NeuralNetwork {
   }
 
   feedForward(inputs) {
-    for (let i = 0; i < this.hiddenSize; i++) {
-      this.hiddenLayer[i] = 0;
-      for (let j = 0; j < this.inputSize; j++) {
-        this.hiddenLayer[i] += this.weightsInputToHidden[i][j] * inputs[j];
+    this.hiddenLayer = Array.from(
+      { length: this.hiddenSize },
+      (node = 0, i) => {
+        for (let j = 0; j < this.inputSize; j++) {
+          node += this.weightsInputToHidden[i][j] * inputs[j];
+        }
+        return sigmoid(node + this.biasHidden[i]);
       }
-      this.hiddenLayer[i] += this.biasHidden[i];
-      this.hiddenLayer[i] = sigmoid(this.hiddenLayer[i]);
-    }
+    );
 
-    const output = new Array(this.outputSize);
-    for (let i = 0; i < this.outputSize; i++) {
-      output[i] = 0;
+    return Array.from({ length: this.outputSize }, (node = 0, i) => {
       for (let j = 0; j < this.hiddenSize; j++) {
-        output[i] += this.weightsHiddenToOutput[i][j] * this.hiddenLayer[j];
+        node += this.weightsHiddenToOutput[i][j] * this.hiddenLayer[j];
       }
-      output[i] += this.biasOutput[i];
-      output[i] = sigmoid(output[i]);
-    }
-    return output;
+      return sigmoid(node + this.biasOutput[i]);
+    });
   }
 
   train(inputs, target) {
     const output = this.feedForward(inputs);
 
-    const errorsOutput = new Array(this.outputSize);
+    // const errorsOutput = new Array(this.outputSize);
     const errorsHidden = new Array(this.hiddenSize);
 
-    for (let i = 0; i < this.outputSize; i++) {
-      errorsOutput[i] = target[i] - output[i];
+    const errorsOutput = output.map((o, i) => {
+      let e = target[i] - o;
       for (let j = 0; j < this.hiddenSize; j++) {
         this.weightsHiddenToOutput[i][j] +=
-          this.learningRate *
-          errorsOutput[i] *
-          output[i] *
-          (1 - output[i]) *
-          this.hiddenLayer[j];
+          this.learningRate * e * o * (1 - o) * this.hiddenLayer[j];
       }
-      this.biasOutput[i] += this.learningRate * errorsOutput[i];
-    }
+      this.biasOutput[i] += this.learningRate * e;
+      return e;
+    });
 
     for (let i = 0; i < this.hiddenSize; i++) {
       errorsHidden[i] = 0;
