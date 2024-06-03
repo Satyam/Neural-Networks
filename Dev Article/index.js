@@ -2,67 +2,60 @@ const canvas = document.getElementById('graph');
 const ctx = canvas.getContext('2d');
 const pointRadius = 5; // Radius of the points
 
-const trainingData = [];
-const numDataPoints = document.querySelector('#trainingDataSize').value; // Adjust the number of data points as needed
-
-for (let i = 0; i < numDataPoints; i++) {
-  const x = Math.random() * 2 - 1; // Random x value between -1 and 1
-  const y = Math.random() * 2 - 1; // Random y value between -1 and 1
-
-  let label;
-  if (x <= 0 && y < 0) {
-    label = 'blue';
-  } else if (x <= 0 && y > 0) {
-    label = 'green';
-  } else if (x > 0 && y <= 0) {
-    label = 'red';
-  } else {
-    label = 'purple';
-  }
-
-  trainingData.push({ x, y, label });
-}
-
-var hiddenNodes = parseInt(document.querySelector('#hiddenNodes').value);
-
 var neuralNetwork = '';
 
-function initialise() {
-  console.log('HN', hiddenNodes);
-  clearCanvas();
-  neuralNetwork = new NeuralNetwork(2, hiddenNodes, 4);
+function readInt(selector) {
+  return parseInt(document.querySelector(selector).value, 10);
 }
 
+function initialise() {
+  clearCanvas();
+  neuralNetwork = new NeuralNetwork(2, readInt('#hiddenNodes'), 4);
+}
+
+initialise();
 function train() {
-  for (
-    let i = 0;
-    i < parseInt(document.querySelector('#trainingIterations').value);
-    i++
-  ) {
-    const data = trainingData[Math.floor(Math.random() * trainingData.length)];
-    neuralNetwork.train([data.x, data.y], oneHotEncode(data.label));
+  const trainingData = Array.from(
+    {
+      // Adjust the number of data points as needed
+      length: readInt('#trainingDataSize'),
+    },
+    () => {
+      for (let i = readInt('#trainingDataSize'); i--; ) {
+        const x = Math.random() * 2 - 1; // Random x value between -1 and 1
+        const y = Math.random() * 2 - 1; // Random y value between -1 and 1
+
+        let label;
+        if (x <= 0 && y < 0) {
+          label = 'blue';
+        } else if (x <= 0 && y > 0) {
+          label = 'green';
+        } else if (x > 0 && y <= 0) {
+          label = 'red';
+        } else {
+          label = 'purple';
+        }
+        return { x, y, label };
+      }
+    }
+  );
+  for (let i = readInt('#trainingIterations'); i--; ) {
+    const { x, y, label } =
+      trainingData[Math.floor(Math.random() * trainingData.length)];
+    neuralNetwork.train([x, y], oneHotEncode(label));
   }
-  alert('Training complete');
 }
 
 function classifyPoints() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawAxes();
-  this.points = [];
-  for (
-    let i = 0;
-    i < parseInt(document.querySelector('#numPoints').value);
-    i++
-  ) {
+  for (let i = readInt('#numPoints'); i--; ) {
     const x = Math.random() * 2 - 1; // Random x-coordinate between -1 and 1
     const y = Math.random() * 2 - 1; // Random y-coordinate between -1 and 1
     const output = neuralNetwork.feedForward([x, y]);
     const predictedLabel = oneHotDecode(output);
     drawPoint(x, y, predictedLabel);
-    points.push({ x, y, predictedLabel });
   }
-  console.log(points);
-  console.log(neuralNetwork.hiddenLayer);
 }
 
 function oneHotEncode(label) {
