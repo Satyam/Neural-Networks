@@ -21,22 +21,20 @@ function train() {
       length: readInt('#trainingDataSize'),
     },
     () => {
-      for (let i = readInt('#trainingDataSize'); i--; ) {
-        const x = Math.random() * 2 - 1; // Random x value between -1 and 1
-        const y = Math.random() * 2 - 1; // Random y value between -1 and 1
+      const x = Math.random() * 2 - 1; // Random x value between -1 and 1
+      const y = Math.random() * 2 - 1; // Random y value between -1 and 1
 
-        let label;
-        if (x <= 0 && y < 0) {
-          label = 'blue';
-        } else if (x <= 0 && y > 0) {
-          label = 'green';
-        } else if (x > 0 && y <= 0) {
-          label = 'red';
-        } else {
-          label = 'purple';
-        }
-        return { x, y, label };
+      let label;
+      if (x <= 0 && y < 0) {
+        label = 'blue';
+      } else if (x <= 0 && y > 0) {
+        label = 'green';
+      } else if (x > 0 && y <= 0) {
+        label = 'red';
+      } else {
+        label = 'purple';
       }
+      return { x, y, label };
     }
   );
   for (let i = readInt('#trainingIterations'); i--; ) {
