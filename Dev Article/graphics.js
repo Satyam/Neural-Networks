@@ -26,6 +26,7 @@ function drawAxes() {
   ctx.stroke();
   ctx.closePath();
 }
+
 function visualizeNeuronsAndWeights() {
   clearCanvas(); // Clear the canvas
   visualizeLayer(100, 100, neuralNetwork.inputSize, 'grey', 'Input');
@@ -99,8 +100,6 @@ function drawBias(x, y, bias) {
   ctx.fillStyle = 'black';
   ctx.fillText('Bias: ' + bias.toFixed(2), x - 50, y + 30);
 }
-
-var yOffset = 0;
 
 function drawWeight(fromX, fromY, toX, toY, weight, color) {
   ctx.beginPath();

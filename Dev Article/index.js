@@ -1,4 +1,4 @@
-var neuralNetwork = '';
+let neuralNetwork = '';
 
 function readInt(selector) {
   return parseInt(document.querySelector(selector).value, 10);
@@ -8,6 +8,23 @@ function initialise() {
   clearCanvas();
   neuralNetwork = new NeuralNetwork(2, readInt('#hiddenNodes'), 4);
 }
+
+const DOTS = {
+  BLUE: 1,
+  GREEN: 2,
+  RED: 3,
+  PURPLE: 4,
+};
+
+const dotColors = ['black', 'blue', 'green', 'red', 'purple'];
+
+const dotEncodings = [
+  [0, 0, 0, 0], // none
+  [1, 0, 0, 0], // BLUE
+  [0, 1, 0, 0], // GREEN
+  [0, 0, 1, 0], // RED
+  [0, 0, 0, 1], // PURPLE
+];
 
 initialise();
 
@@ -21,23 +38,23 @@ function train() {
       const x = Math.random() * 2 - 1; // Random x value between -1 and 1
       const y = Math.random() * 2 - 1; // Random y value between -1 and 1
 
-      let label;
+      let type;
       if (x <= 0 && y < 0) {
-        label = 'blue';
+        type = DOTS.BLUE;
       } else if (x <= 0 && y > 0) {
-        label = 'green';
+        type = DOTS.GREEN;
       } else if (x > 0 && y <= 0) {
-        label = 'red';
+        type = DOTS.RED;
       } else {
-        label = 'purple';
+        type = DOTS.PURPLE;
       }
-      return { x, y, label };
+      return { x, y, type };
     }
   );
   for (let i = readInt('#trainingIterations'); i--; ) {
-    const { x, y, label } =
+    const { x, y, type } =
       trainingData[Math.floor(Math.random() * trainingData.length)];
-    neuralNetwork.train([x, y], oneHotEncode(label));
+    neuralNetwork.train([x, y], dotEncode(type));
   }
 }
 
@@ -48,25 +65,18 @@ function classifyPoints() {
     const x = Math.random() * 2 - 1; // Random x-coordinate between -1 and 1
     const y = Math.random() * 2 - 1; // Random y-coordinate between -1 and 1
     const output = neuralNetwork.feedForward([x, y]);
-    const predictedLabel = oneHotDecode(output);
-    drawPoint(x, y, predictedLabel);
+    const predictedColor = dotColor(output);
+    drawPoint(x, y, predictedColor);
   }
 }
 
-function oneHotEncode(label) {
-  const encoding = {
-    blue: [1, 0, 0, 0],
-    red: [0, 1, 0, 0],
-    green: [0, 0, 1, 0],
-    purple: [0, 0, 0, 1],
-  };
-  return encoding[label];
+function dotEncode(type) {
+  return dotEncodings[type];
 }
 
-function oneHotDecode(output) {
-  const labels = ['blue', 'red', 'green', 'purple'];
+function dotColor(output) {
   const maxIndex = output.indexOf(Math.max(...output));
-  return labels[maxIndex];
+  return dotColors[maxIndex];
 }
 
 function sigmoid(x) {
