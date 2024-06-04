@@ -10,21 +10,29 @@ function initialise() {
 }
 
 const DOTS = {
-  BLUE: 1,
-  GREEN: 2,
-  RED: 3,
-  PURPLE: 4,
+  BLUE: 0,
+  GREEN: 1,
+  RED: 2,
+  PURPLE: 3,
 };
 
-const dotColors = ['black', 'blue', 'green', 'red', 'purple'];
+const dotColors = ['blue', 'green', 'red', 'purple'];
 
 const dotEncodings = [
-  [0, 0, 0, 0], // none
   [1, 0, 0, 0], // BLUE
   [0, 1, 0, 0], // GREEN
   [0, 0, 1, 0], // RED
   [0, 0, 0, 1], // PURPLE
 ];
+
+function dotEncode(type) {
+  return dotEncodings[type];
+}
+
+function dotColor(output) {
+  const maxIndex = output.indexOf(Math.max(...output));
+  return dotColors[maxIndex];
+}
 
 initialise();
 
@@ -51,6 +59,7 @@ function train() {
       return { x, y, type };
     }
   );
+
   for (let i = readInt('#trainingIterations'); i--; ) {
     const { x, y, type } =
       trainingData[Math.floor(Math.random() * trainingData.length)];
@@ -68,15 +77,6 @@ function classifyPoints() {
     const predictedColor = dotColor(output);
     drawPoint(x, y, predictedColor);
   }
-}
-
-function dotEncode(type) {
-  return dotEncodings[type];
-}
-
-function dotColor(output) {
-  const maxIndex = output.indexOf(Math.max(...output));
-  return dotColors[maxIndex];
 }
 
 function sigmoid(x) {
