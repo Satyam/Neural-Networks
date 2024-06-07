@@ -29,9 +29,12 @@ function drawAxes() {
 
 function visualizeNeuronsAndWeights() {
   clearCanvas(); // Clear the canvas
-  visualizeLayer(100, 100, neuralNetwork.inputSize, 'grey', 'Input');
-  visualizeLayer(300, 100, neuralNetwork.hiddenSize, 'aqua', 'Hidden', true);
-  visualizeLayer(500, 100, neuralNetwork.outputSize, 'red', 'Output');
+  drawText(100, 50, 'Input', 'center');
+  visualizeLayer(100, neuralNetwork.inputSize, 'grey', 'Input');
+  drawText(300, 50, 'Hidden', 'center');
+  visualizeLayer(300, neuralNetwork.hiddenSize, 'aqua', 'Hidden', true);
+  drawText(500, 50, 'Output', 'center');
+  visualizeLayer(500, neuralNetwork.outputSize, 'red', 'Output');
   visualizeWeights();
 }
 
@@ -39,19 +42,18 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function visualizeLayer(startX, startY, neuronCount, color, label, showBias) {
-  const neuronSpacing = 100;
+function visualizeLayer(startX, neuronCount, color, label, showBias) {
   const neuronRadius = 20;
+  const neuronSpacing = ctx.canvas.height / (neuronCount + 1);
 
-  for (let i = 0; i < neuronCount; i++) {
-    const x = startX;
-    const y = startY + i * neuronSpacing;
-    drawNeuron(x, y, neuronRadius, color, label);
+  let y = (canvas.height - (neuronCount - 1) * neuronSpacing) / 2;
+  for (let i = 0; i < neuronCount; i++, y += neuronSpacing) {
+    drawNeuron(startX, y, neuronRadius, color);
     if (showBias) {
-      drawBias(x, y, neuralNetwork.biasHidden[i]);
+      drawBias(startX, y, neuralNetwork.biasHidden[i]);
     }
     if (label === 'Input') {
-      drawInputToHiddenWeights(x, y);
+      drawInputToHiddenWeights(startX, y);
     }
   }
 }
@@ -82,23 +84,25 @@ function visualizeWeights() {
   }
 }
 
-function drawNeuron(x, y, radius, color, label) {
+function drawNeuron(x, y, radius, color) {
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
   ctx.fillStyle = color;
   ctx.fill();
   ctx.strokeStyle = 'black';
   ctx.stroke();
-  ctx.font = '14px Arial';
-  ctx.fillStyle = 'black';
-  ctx.fillText(label, x - 15, y + 5);
   ctx.closePath();
 }
 
-function drawBias(x, y, bias) {
+function drawText(x, y, text, align) {
   ctx.font = '14px Arial';
   ctx.fillStyle = 'black';
-  ctx.fillText('Bias: ' + bias.toFixed(2), x - 50, y + 30);
+  if (align) ctx.textAlign = align;
+  ctx.fillText(text, x, y);
+}
+
+function drawBias(x, y, bias) {
+  drawText('Bias: ' + bias.toFixed(2), x - 50, y + 30);
 }
 
 function drawWeight(fromX, fromY, toX, toY, weight, color) {
