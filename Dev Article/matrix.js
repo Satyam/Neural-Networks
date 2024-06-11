@@ -87,7 +87,7 @@ class Matrix {
         return new Vector(this.#rows).forEach((_, row) => {
           let val = 0;
           for (let n = 0; n < this.#cols; n++) {
-            val += this.#matrix[row][n] + m.get(n);
+            val += this.#matrix[row][n] * m.get(n);
           }
           return val;
         });
@@ -113,9 +113,13 @@ class Matrix {
         self: [${this.#rows},${this.#cols}] with [${m.rows},${m.cols}]`
       );
     }
+    if (isNumber(m)) {
+      return new Matrix(this).forEach((v) => v + m);
+    }
+    throw new Error(`Can't add Matrix with ${m} of type ${typeof m}`);
   }
   toString() {
-    return `
+    return `-- Matrix --
 rows: ${this.#rows}, cols: ${this.#cols}
 ${this.#matrix.map((row) => row.join(', ')).join('\n')}`;
   }
@@ -167,7 +171,21 @@ class Vector {
     return this;
   }
   times(m) {
-    if (m instanceof Matrix && true) {
+    if (m instanceof Matrix) {
+      if (this.#numItems === m.cols) {
+        return new Vector(m.rows).forEach((_, row) => {
+          let val = 0;
+          for (let n = 0; n < this.#numItems; n++) {
+            val += this.#vector[n] * m.get(row, n);
+          }
+          return val;
+        });
+      }
+      throw Error(
+        `Vector of ${
+          this.#numItems
+        } items cannot be multiplied with Matrix of ${m.cols} columns`
+      );
     }
     if (m instanceof Vector && m.numItems === this.#numItems) {
       return this.#vector.reduce((out, val, i) => out + val * m.get(i), 0);
@@ -176,6 +194,11 @@ class Vector {
       return new Vector(this).forEach((v) => v * m);
     }
     throw new Error(`Can't multiply Vector with ${m} of type ${typeof m}`);
+  }
+  toString() {
+    return `-- Vector --
+Number of items ${this.#numItems}
+${this.#vector.join(', ')}`;
   }
 }
 
