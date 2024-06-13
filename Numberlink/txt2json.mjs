@@ -42,5 +42,32 @@ for (const file of files) {
     }
   }
   data.moves = moves.split(';');
+  let rows, cols;
+  if (data.size) {
+    if (data.rows || data.cols) {
+      console.error(file, 'size and (rows or cols)');
+    }
+    rows = parseInt(data.size, 10);
+    cols = parseInt(data.size, 10);
+  } else {
+    rows = parseInt(data.rows, 10);
+    cols = parseInt(data.cols, 10);
+  }
+  if (
+    !(
+      data.solution.length === rows &&
+      data.solution.every((row) => row.length === cols)
+    )
+  ) {
+    console.error(file, 'solution size does not match');
+  }
+  if (
+    !(
+      data.problem.length === rows &&
+      data.problem.every((row) => row.length === cols)
+    )
+  ) {
+    console.error(file, 'problem size does not match');
+  }
   await fs.writeJson(file.replace('.txt', '.json'), data);
 }
