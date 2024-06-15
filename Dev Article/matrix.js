@@ -22,7 +22,7 @@ class Matrix {
       this.#cols = rows[0].length;
       return;
     }
-    if (type) this.#rows = rows;
+    this.#rows = rows;
     this.#cols = cols;
     this.#matrix = Array.from({ length: rows }, () => new Array(cols).fill(0));
   }
@@ -135,7 +135,9 @@ class Vector {
       return;
     }
     if (Array.isArray(numItems)) {
-      this.#vector = Array;
+      this.#vector = Array.from(numItems);
+      this.#numItems = numItems.length;
+      return;
     }
     this.#numItems = numItems;
     this.#vector = new Array(numItems).fill(0);
@@ -195,38 +197,36 @@ class Vector {
     }
     throw new Error(`Can't multiply Vector with ${m} of type ${typeof m}`);
   }
+  add(v) {
+    if (v instanceof Vector) {
+      if (v.numItems === this.#numItems) {
+        return new Vector(this).forEach((item, i) => item + v.get(i));
+      } else {
+        throw Error(
+          `Vector of size ${
+            v.numItems
+          } cannot be added to this vector of size ${this.#numItems}`
+        );
+      }
+    }
+    if (Array.isArray(v)) {
+      if (v.lenth === this.#numItems) {
+        return new Vector(this).forEach((item, i) => item + v[i]);
+      } else {
+        throw Error(
+          `Array of size ${v.length} cannot be added to this vector of size ${
+            this.#numItems
+          }`
+        );
+      }
+    }
+    if (isNumber(v)) {
+      return new Vector(this).forEach((item) => item + v);
+    }
+  }
   toString() {
     return `-- Vector --
 Number of items ${this.#numItems}
 ${this.#vector.join(', ')}`;
   }
 }
-
-// test
-
-// console.log('new Matrix(3,4)', new Matrix(3, 4).toString());
-const A = new Matrix([
-  [1, 0, 1],
-  [2, 1, 1],
-  [0, 1, 1],
-  [1, 1, 2],
-]);
-const B = new Matrix([
-  [1, 2, 1],
-  [2, 3, 1],
-  [4, 2, 2],
-]);
-console.log('A', A.toString());
-console.log('B', B.toString());
-console.log('A * B', A.times(B).toString());
-console.log('A * 2', A.times(2).toString());
-// console.log('random -1,1', new Matrix(3, 4).randomize(-1, 1).toString());
-// console.log('random 10', new Matrix(2, 2).randomize(10).toString());
-// console.log(
-//   'random 0,10,true',
-//   new Matrix(2, 2).randomize(0, 10, true).toString()
-// );
-// console.log(
-//   'random 0,10,true',
-//   new Matrix(2, 2).randomize(0, 1, true).toString()
-// );
