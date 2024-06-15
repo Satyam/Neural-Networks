@@ -76,7 +76,8 @@ function classifyPoints() {
   for (let i = readInt('#numPoints'); i--; ) {
     const x = Math.random() * 2 - 1; // Random x-coordinate between -1 and 1
     const y = Math.random() * 2 - 1; // Random y-coordinate between -1 and 1
-    const output = neuralNetwork.feedForward([x, y]);
+    neuralNetwork.feedForward([x, i]);
+    const output = neuralNetwork.feedForward([x, y]).toArray();
     const predictedColor = dotColor(output);
     drawPoint(x, y, predictedColor);
   }

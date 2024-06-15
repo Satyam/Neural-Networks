@@ -2,30 +2,32 @@ class NeuralNetwork {
   constructor(...sizes) {
     this.sizes =
       sizes.length === 1 && Array.isArray(sizes[0]) ? sizes[0] : sizes;
-    this.steps = this.sizes.length - 1;
-    this.allWeights = Array.from({ length: this.steps }, (_, i) =>
+    const steps = this.sizes.length - 1;
+    this.allWeights = Array.from({ length: steps }, (_, i) =>
       new Matrix(sizes[i + 1], sizes[i]).randomize(-1, 1)
     );
-    this.allBiases = Array.from({ length: this.steps }, (_, i) =>
+    this.allBiases = Array.from({ length: steps }, (_, i) =>
       new Vector(sizes[i + 1]).randomize(-1, 1)
     );
+    this.layers = Array.from(
+      { length: this.sizes.length },
+      (_, i) => new Vector(sizes[i])
+    );
   }
-  // TODO: feedForward should operate from one layer to the next
-  // the first time called with input getting layer[1],
-  // then layer[1] to layer[2] and so until output.
 
   feedForward(inputs) {
-    let layer = new Vector(inputs);
-    for (let step = 0; step < this.steps - 1; step++) {
+    this.layers[0] = new Vector(inputs);
+    for (let step = 0; step < this.sizes - 1; step++) {
+      let layer = this.layers[step];
       const weights = this.allWeights[step];
       const biases = this.allBiases[step];
-      layer = weights.times(layer).add(biases).forEach(sigmoid);
+      this.layers[step + 1] = weights.times(layer).add(biases).forEach(sigmoid);
     }
-    return layer.vector;
+    return this.layers.at(-1);
   }
 
   train(inputs, target, learningRate) {
-    const output = this.feedForward(inputs);
+    const output = this.feedForward(inputs).toArray();
 
     const errorsOutput = output.map((o, i) => {
       let errOut = target[i] - o;

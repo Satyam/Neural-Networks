@@ -51,7 +51,7 @@ class Matrix {
       return integer ? Math.round(val) : val;
     });
   }
-  get matrix() {
+  toArray() {
     return this.#matrix;
   }
   get(row, col) {
@@ -162,7 +162,7 @@ class Vector {
       return integer ? Math.round(val) : val;
     });
   }
-  get vector() {
+  toArray() {
     return this.#vector;
   }
   get(item) {
