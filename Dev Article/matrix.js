@@ -1,5 +1,5 @@
 const isNumber = (n) => {
-  return typeof m === 'number' && Number.isFinite(m);
+  return typeof n === 'number' && Number.isFinite(n);
 };
 
 class Matrix {
@@ -8,7 +8,7 @@ class Matrix {
   #cols = 0;
   constructor(rows, cols) {
     if (rows instanceof Matrix) {
-      this.#matrix = Array.from(rows.matrix);
+      this.#matrix = Array.from(rows.toArray());
       this.#rows = rows.rows;
       this.#cols = rows.cols;
       return;
@@ -130,8 +130,8 @@ class Vector {
   #numItems;
   constructor(numItems) {
     if (numItems instanceof Vector) {
-      this.#vector = Array.from(numItems.vector);
-      this.#numItems = numItems.numItems;
+      this.#vector = Array.from(numItems.toArray());
+      this.#numItems = this.#vector.length;
       return;
     }
     if (Array.isArray(numItems)) {
