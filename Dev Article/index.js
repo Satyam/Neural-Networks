@@ -4,6 +4,9 @@ function readInt(selector) {
   return parseInt(document.querySelector(selector).value, 10);
 }
 
+function readFloat(selector) {
+  return parseFloat(document.querySelector(selector).value);
+}
 function initialise() {
   clearCanvas();
   neuralNetwork = new NeuralNetwork(2, readInt('#hiddenNodes'), 4);
@@ -59,11 +62,11 @@ function train() {
       return { x, y, type };
     }
   );
-
+  const learningRate = readFloat('#learningRate');
   for (let i = readInt('#trainingIterations'); i--; ) {
     const { x, y, type } =
       trainingData[Math.floor(Math.random() * trainingData.length)];
-    neuralNetwork.train([x, y], dotEncode(type));
+    neuralNetwork.train([x, y], dotEncode(type), learningRate);
   }
 }
 
