@@ -1,49 +1,39 @@
 class NeuralNetwork {
-  constructor(inputSize, hiddenSize, outputSize) {
-    this.inputSize = inputSize;
-    this.hiddenSize = hiddenSize;
-    this.outputSize = outputSize;
-    this.weightsInputToHidden = Array.from({ length: hiddenSize }, () =>
-      Array.from({ length: inputSize }, () => Math.random() * 2 - 1)
+  constructor(...sizes) {
+    this.sizes =
+      sizes.length === 1 && Array.isArray(sizes[0]) ? sizes[0] : sizes;
+    this.steps = this.sizes.length - 1;
+    this.allWeights = Array.from({ length: this.steps }, (_, i) =>
+      new Matrix(sizes[i + 1], sizes[i]).randomize(-1, 1)
     );
-    this.biasHidden = Array(hiddenSize).fill(0);
-    this.weightsHiddenToOutput = Array.from({ length: outputSize }, () =>
-      Array.from({ length: hiddenSize }, () => Math.random() * 2 - 1)
+    this.allBiases = Array.from({ length: this.steps }, (_, i) =>
+      new Vector(sizes[i + 1]).randomize(-1, 1)
     );
-    this.biasOutput = Array(outputSize).fill(0);
-    this.learningRate = document.querySelector('#learningRate').value; // Adjusted learning rate
-    this.hiddenLayer = new Array(this.hiddenSize);
   }
+  // TODO: feedForward should operate from one layer to the next
+  // the first time called with input getting layer[1],
+  // then layer[1] to layer[2] and so until output.
 
   feedForward(inputs) {
-    this.hiddenLayer = Array.from(
-      { length: this.hiddenSize },
-      (node = 0, i) => {
-        for (let j = 0; j < this.inputSize; j++) {
-          node += this.weightsInputToHidden[i][j] * inputs[j];
-        }
-        return sigmoid(node + this.biasHidden[i]);
-      }
-    );
-
-    return Array.from({ length: this.outputSize }, (node = 0, i) => {
-      for (let j = 0; j < this.hiddenSize; j++) {
-        node += this.weightsHiddenToOutput[i][j] * this.hiddenLayer[j];
-      }
-      return sigmoid(node + this.biasOutput[i]);
-    });
+    let layer = new Vector(inputs);
+    for (let step = 0; step < this.steps - 1; step++) {
+      const weights = this.allWeights[step];
+      const biases = this.allBiases[step];
+      layer = weights.times(layer).add(biases).forEach(sigmoid);
+    }
+    return layer.vector;
   }
 
-  train(inputs, target) {
+  train(inputs, target, learningRate) {
     const output = this.feedForward(inputs);
 
     const errorsOutput = output.map((o, i) => {
       let errOut = target[i] - o;
-      const weightFactor = this.learningRate * errOut * o * (1 - o);
+      const weightFactor = learningRate * errOut * o * (1 - o);
       for (let j = 0; j < this.hiddenSize; j++) {
         this.weightsHiddenToOutput[i][j] += weightFactor * this.hiddenLayer[j];
       }
-      this.biasOutput[i] += this.learningRate * errOut;
+      this.biasOutput[i] += learningRate * errOut;
       return errOut;
     });
 
@@ -52,9 +42,9 @@ class NeuralNetwork {
       for (let j = 0; j < this.outputSize; j++) {
         errHidden += this.weightsHiddenToOutput[j][i] * errorsOutput[j];
       }
-      this.biasHidden[i] += this.learningRate * errHidden;
+      this.biasHidden[i] += learningRate * errHidden;
       const factor =
-        this.learningRate *
+        learningRate *
         errHidden *
         this.hiddenLayer[i] *
         (1 - this.hiddenLayer[i]);
