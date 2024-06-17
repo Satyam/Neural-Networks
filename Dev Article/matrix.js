@@ -41,6 +41,19 @@ class Matrix {
     }
     return this;
   }
+  reduce(fn, initial) {
+    let red = initial;
+    for (let r = 0; r < this.#rows; r++) {
+      for (let c = 0; c < this.#cols; c++) {
+        red = fn(red, this.#matrix[r][c], r, c);
+      }
+    }
+    return red;
+  }
+  fill(val) {
+    this.forEach(() => val);
+    return this;
+  }
   randomize(min = 0, max = 1, integer = false) {
     if (typeof max === 'undefined') {
       max = min;
@@ -118,6 +131,23 @@ class Matrix {
     }
     throw new Error(`Can't add Matrix with ${m} of type ${typeof m}`);
   }
+  minus(m) {
+    if (m instanceof Matrix) {
+      if (this.#cols === m.cols && this.#rows === m.rows) {
+        return new Matrix(this.#rows, this.#cols).forEach((_, row, col) => {
+          return this.#matrix[row][col] - m.get(row, col);
+        });
+      }
+      throw Error(
+        `Matrices are of different size: 
+        self: [${this.#rows},${this.#cols}] with [${m.rows},${m.cols}]`
+      );
+    }
+    if (isNumber(m)) {
+      return new Matrix(this).forEach((v) => v - m);
+    }
+    throw new Error(`Can't subtract Matrix with ${m} of type ${typeof m}`);
+  }
   toString() {
     return `-- Matrix --
 rows: ${this.#rows}, cols: ${this.#cols}
@@ -150,6 +180,13 @@ class Vector {
       const val = this.#vector[i];
       this.#vector[i] = fn(val, i) ?? val;
     }
+    return this;
+  }
+  reduce(fn, initial) {
+    return this.#vector.reduce(fn, initial);
+  }
+  fill(val) {
+    this.forEach(() => val);
     return this;
   }
   randomize(min = 0, max = 1, integer = false) {
@@ -189,8 +226,18 @@ class Vector {
         } items cannot be multiplied with Matrix of ${m.cols} columns`
       );
     }
-    if (m instanceof Vector && m.numItems === this.#numItems) {
-      return this.#vector.reduce((out, val, i) => out + val * m.get(i), 0);
+    if (m instanceof Vector) {
+      if (m.numItems === this.#numItems) {
+        return new Vector(this).forEach((v, i) => v * m.get(i));
+      } else {
+        throw Error(
+          `Vector of ${
+            this.#numItems
+          } items cannot be multiplied with another Vector of  ${
+            m.#numItems
+          } items`
+        );
+      }
     }
     if (isNumber(m)) {
       return new Vector(this).forEach((v) => v * m);
@@ -222,6 +269,33 @@ class Vector {
     }
     if (isNumber(v)) {
       return new Vector(this).forEach((item) => item + v);
+    }
+  }
+  minus(v) {
+    if (v instanceof Vector) {
+      if (v.numItems === this.#numItems) {
+        return new Vector(this).forEach((item, i) => item - v.get(i));
+      } else {
+        throw Error(
+          `Vector of size ${
+            v.numItems
+          } cannot be subtracted from this vector of size ${this.#numItems}`
+        );
+      }
+    }
+    if (Array.isArray(v)) {
+      if (v.length === this.#numItems) {
+        return new Vector(this).forEach((item, i) => item - v[i]);
+      } else {
+        throw Error(
+          `Array of size ${
+            v.length
+          } cannot be subtracted from this vector of size ${this.#numItems}`
+        );
+      }
+    }
+    if (isNumber(v)) {
+      return new Vector(this).forEach((item) => item - v);
     }
   }
   toString() {
