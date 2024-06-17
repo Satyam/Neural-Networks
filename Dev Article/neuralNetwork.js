@@ -30,25 +30,22 @@ class NeuralNetwork {
   }
 
   train(inputs, target, learningRate) {
-    const output = this.feedForward(inputs).toArray();
-    const errorsOutput = output.map((o, i) => {
-      let errOut = target[i] - o;
-      const weightFactor = learningRate * errOut * o * (1 - o);
-      for (let j = 0; j < this.#sizes[1]; j++) {
-        this.#weights[1].set(
-          i,
-          j,
-          this.#weights[1].get(i, j) + weightFactor * this.#layers[1].get(j)
-        );
-      }
-      this.#biases[2].set(i, this.#biases[2].get(i) + learningRate * errOut);
-      return errOut;
-    });
+    const output = this.feedForward(inputs);
+    const errors = [];
+    errors[2] = new Vector(target).minus(output);
+    const wF = errors[1]
+      .times(learningRate)
+      .times(output)
+      .times(new Vector(output.numItems).fill(1).minus(output));
+    this.#weights[1].forEach(
+      (val, row, col) => val + wF.get(row) * this.#layers[1].get(col)
+    );
+    this.#biases[2].forEach((b, i) => b + learningRate * errors[2].get(i));
 
     for (let i = 0; i < this.#sizes[1]; i++) {
       let errHidden = 0;
       for (let j = 0; j < this.#sizes[2]; j++) {
-        errHidden += this.#weights[1].get(j, i) * errorsOutput[j];
+        errHidden += this.#weights[1].get(j, i) * errors[1].get(j);
       }
       this.#biases[1].set(i, this.#biases[1].get(i) + learningRate * errHidden);
       const factor =
