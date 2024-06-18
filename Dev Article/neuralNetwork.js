@@ -43,16 +43,19 @@ class NeuralNetwork {
       errors = !errors
         ? new Vector(target).minus(thisLayer)
         : new Vector(
-            thisWeights.reduce((e, w, c, r) => {
-              e[r] += w * errors.get(c);
-              return e;
+            // **Important:
+            //   the column and row arguments in the callback
+            //   are reversed to produce an matrix flipped diagonally.
+            thisWeights.reduce((err, weight, col, row) => {
+              err[row] += weight * errors.get(col);
+              return err;
             }, Array(this.#sizes[step]).fill(0))
           );
 
       const weightFactor = errors
         .times(learningRate)
         .times(thisLayer)
-        .times(new Vector(thisLayer).fill(1).minus(thisLayer));
+        .times(new Vector(thisLayer).forEach((val) => 1 - val));
 
       prevWeights.forEach(
         (weight, row, col) =>
