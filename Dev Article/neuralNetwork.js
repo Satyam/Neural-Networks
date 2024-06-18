@@ -33,7 +33,7 @@ class NeuralNetwork {
     const output = this.feedForward(inputs);
     const errors = [];
     errors[2] = new Vector(target).minus(output);
-    const wF = errors[1]
+    const wF = errors[2]
       .times(learningRate)
       .times(output)
       .times(new Vector(output.numItems).fill(1).minus(output));
@@ -42,24 +42,20 @@ class NeuralNetwork {
     );
     this.#biases[2].forEach((b, i) => b + learningRate * errors[2].get(i));
 
-    for (let i = 0; i < this.#sizes[1]; i++) {
-      let errHidden = 0;
-      for (let j = 0; j < this.#sizes[2]; j++) {
-        errHidden += this.#weights[1].get(j, i) * errors[1].get(j);
-      }
-      this.#biases[1].set(i, this.#biases[1].get(i) + learningRate * errHidden);
-      const factor =
-        learningRate *
-        errHidden *
-        this.#layers[1].get(i) *
-        (1 - this.#layers[1].get(i));
-      for (let j = 0; j < this.#sizes[0]; j++) {
-        this.#weights[0].set(
-          i,
-          j,
-          this.#weights[0].get(i, j) + factor * inputs[j]
-        );
-      }
-    }
+    // for the inverse matrix, I swap the column and row indices
+    errors[1] = new Vector(
+      this.#weights[1].reduce((e, w, c, r) => {
+        e[r] += w * errors[2].get(c);
+        return e;
+      }, Array(this.#weights[1].cols).fill(0))
+    );
+    this.#biases[1].forEach((b, i) => b + learningRate * errors[1].get(i));
+    const wf1 = errors[1]
+      .times(learningRate)
+      .times(this.#layers[1])
+      .times(new Vector(this.#sizes[1]).fill(1).minus(this.#layers[1]));
+    this.#weights[0].forEach(
+      (weight, row, col) => weight + wf1.get(row) * inputs[col]
+    );
   }
 }
