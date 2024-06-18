@@ -30,32 +30,38 @@ class NeuralNetwork {
   }
 
   train(inputs, target, learningRate) {
-    const output = this.feedForward(inputs);
-    const errors = [];
-    errors[2] = new Vector(target).minus(output);
-    const wF = errors[2]
-      .times(learningRate)
-      .times(output)
-      .times(new Vector(output.numItems).fill(1).minus(output));
-    this.#weights[1].forEach(
-      (val, row, col) => val + wF.get(row) * this.#layers[1].get(col)
-    );
-    this.#biases[2].forEach((b, i) => b + learningRate * errors[2].get(i));
+    this.feedForward(inputs);
 
-    // for the inverse matrix, I swap the column and row indices
-    errors[1] = new Vector(
-      this.#weights[1].reduce((e, w, c, r) => {
-        e[r] += w * errors[2].get(c);
-        return e;
-      }, Array(this.#weights[1].cols).fill(0))
-    );
-    this.#biases[1].forEach((b, i) => b + learningRate * errors[1].get(i));
-    const wf1 = errors[1]
-      .times(learningRate)
-      .times(this.#layers[1])
-      .times(new Vector(this.#sizes[1]).fill(1).minus(this.#layers[1]));
-    this.#weights[0].forEach(
-      (weight, row, col) => weight + wf1.get(row) * inputs[col]
-    );
+    let errors = null;
+    for (let step = this.#sizes.length - 1; step; step--) {
+      const prev = step - 1;
+      const thisLayer = this.#layers[step];
+      const prevLayer = this.#layers[prev];
+      const thisWeights = this.#weights[step];
+      const prevWeights = this.#weights[prev];
+
+      errors = !errors
+        ? new Vector(target).minus(thisLayer)
+        : new Vector(
+            thisWeights.reduce((e, w, c, r) => {
+              e[r] += w * errors.get(c);
+              return e;
+            }, Array(this.#sizes[step]).fill(0))
+          );
+
+      const weightFactor = errors
+        .times(learningRate)
+        .times(thisLayer)
+        .times(new Vector(thisLayer).fill(1).minus(thisLayer));
+
+      prevWeights.forEach(
+        (weight, row, col) =>
+          weight + weightFactor.get(row) * prevLayer.get(col)
+      );
+
+      this.#biases[step].forEach(
+        (bias, i) => bias + learningRate * errors.get(i)
+      );
+    }
   }
 }
