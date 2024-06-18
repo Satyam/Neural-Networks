@@ -1,19 +1,18 @@
+body {
+  display: grid;
+  grid-template-columns: 600px auto;
+  gap: 20px;
+  padding: 20px;
+}
 label {
   display: block;
   padding: 10px;
 }
-a {
-  display: block;
-  margin-bottom: 20px;
-}
-.controls {
-  display: flex;
+.buttons {
+  display: grid;
   gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
   padding: 10px;
-}
-
-body {
-  padding: 20px;
 }
 
 canvas {
