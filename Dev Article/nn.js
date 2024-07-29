@@ -47,50 +47,29 @@ class NN {
     const errors = Array.from({ length: this.#numLayers }, () =>
       Array.from([])
     );
-    this.#net
-      .slice(1)
-      .reverse()
-      .forEach(({ size, layer, biases, weights }, backStep, net) => {
-        // since it is reversed, the previous comes next.
-        const prevLayer = net[backStep + 1]?.layer ?? inputs;
-        const prevErrors = errors[backStep - 1];
-
-        for (let row = 0; row < size; row++) {
-          console.log({
-            backStep,
-            row,
-            numRows: size,
-            numCols: prevLayer.length,
-            wrows: weights.length,
-            wcols: weights[0].length,
-          });
-          let err = 0;
-          if (backStep) {
-            for (let col = 0; col < prevErrors.length; col++) {
-              err += weights[col][row] * prevErrors[col];
-            }
-          } else {
-            err = target[row] - layer[row];
+    for (let step = this.#numLayers - 1; step > 0; step--) {
+      const { size, layer, biases, weights } = this.#net[step];
+      console.log({ step, size, layer, biases, weights });
+      const nextLayer = this.#net[step - 1].layer;
+      for (let row = 0; row < size; row++) {
+        let err = 0;
+        if (step == this.#numLayers - 1) {
+          err = target[row] - layer[row];
+        } else {
+          const prevErrors = errors[step + 1];
+          for (let col = 0; col < prevErrors.length; col++) {
+            err += weights[col][row] * prevErrors[col];
           }
-          errors[backStep][row] = err;
-          // errors[row] = backStep
-          //   ? Array(size).reduce(
-          //       // **Important:
-          //       //   the column and row arguments in the callback
-          //       //   are reversed to produce an matrix flipped diagonally.
-          //       (propagatedErr, err, col) =>
-          //         propagatedErr + weights[col][row] * err,
-          //       0
-          //     )
-          //   : target[row] - layer[row];
-          const weightFactor =
-            learningRate * err * layer[row] * (1 - layer[row]);
-          for (let col = 0; col < weights[0].length; col++) {
-            weights[row][col] += weightFactor * prevLayer[col];
-          }
-          biases[row] += learningRate * err;
         }
-      });
+        errors[step][row] = err;
+        const weightFactor = learningRate * err * layer[row] * (1 - layer[row]);
+        for (let col = 0; col < nextLayer.length; col++) {
+          weights[row][col] += weightFactor * nextLayer[col];
+        }
+        biases[row] += learningRate * err;
+      }
+      debugger;
+    }
   }
 }
 /*
@@ -147,43 +126,4 @@ train(inputs, target) {
       }
     }
  }
-    
- train(inputs, target, learningRate) {
-    this.feedForward(inputs);
-
-    let errors = null;
-    for (let step = this.#sizes.length - 1; step; step--) {
-      const prev = step - 1;
-      const thisLayer = this.#layers[step];
-      const prevLayer = this.#layers[prev];
-      const thisWeights = this.#weights[step];
-      const prevWeights = this.#weights[prev];
-
-      errors = !errors
-        ? new Vector(target).minus(thisLayer)
-        : new Vector(
-            // **Important:
-            //   the column and row arguments in the callback
-            //   are reversed to produce an matrix flipped diagonally.
-            thisWeights.reduce((err, weight, col, row) => {
-              err[row] += weight * errors.get(col);
-              return err;
-            }, Array(this.#sizes[step]).fill(0))
-          );
-
-      const weightFactor = errors
-        .times(learningRate)
-        .times(thisLayer)
-        .times(new Vector(thisLayer).forEach((val) => 1 - val));
-
-      prevWeights.forEach(
-        (weight, row, col) =>
-          weight + weightFactor.get(row) * prevLayer.get(col)
-      );
-
-      this.#biases[step].forEach(
-        (bias, i) => bias + learningRate * errors.get(i)
-      );
-    }
-  }
- */
+*/
