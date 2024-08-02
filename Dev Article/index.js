@@ -63,23 +63,28 @@ function train() {
     }
   );
   const learningRate = readFloat('#learningRate');
+  const t1 = performance.now();
   for (let i = readInt('#trainingIterations'); i--; ) {
     const { x, y, type } =
       trainingData[Math.floor(Math.random() * trainingData.length)];
     neuralNetwork.train([x, y], dotEncode(type), learningRate);
   }
+  console.log('train total', performance.now() - t1);
 }
 
 function classifyPoints() {
   clearCanvas();
   drawAxes();
+  const t1 = performance.now();
+
   for (let i = readInt('#numPoints'); i--; ) {
     const x = Math.random() * 2 - 1; // Random x-coordinate between -1 and 1
     const y = Math.random() * 2 - 1; // Random y-coordinate between -1 and 1
-    const output = neuralNetwork.feedForward([x, y]).toArray();
+    const output = neuralNetwork.feedForward([x, y]);
     const predictedColor = dotColor(output);
     drawPoint(x, y, predictedColor);
   }
+  console.log('classify total', performance.now() - t1);
 }
 
 function sigmoid(x) {
