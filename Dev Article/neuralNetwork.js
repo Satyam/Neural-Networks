@@ -23,6 +23,24 @@ class NeuralNetwork {
         : undefined,
     }));
   }
+
+  get numLayers() {
+    return this.#numLayers;
+  }
+
+  getSize(numLayer) {
+    return this.#net[numLayer].size;
+  }
+  getLayer(numLayer) {
+    return this.#net[numLayer].layer;
+  }
+  getWeights(numLayer) {
+    return this.#net[numLayer].weights;
+  }
+  getBiases(numLayer) {
+    return this.#net[numLayer].biases;
+  }
+
   feedForward(inputs) {
     const net = this.#net;
     net[0].layer = inputs;
