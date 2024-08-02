@@ -1,3 +1,5 @@
+// Not really used because it is inefficient
+
 const isNumber = (n) => {
   return typeof n === 'number' && Number.isFinite(n);
 };

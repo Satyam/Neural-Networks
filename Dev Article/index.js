@@ -1,5 +1,4 @@
 let neuralNetwork = '';
-let nn = '';
 
 function readInt(selector) {
   return parseInt(document.querySelector(selector).value, 10);
@@ -11,7 +10,6 @@ function readFloat(selector) {
 function initialise() {
   clearCanvas();
   neuralNetwork = new NeuralNetwork(2, readInt('#hiddenNodes'), 4);
-  nn = new NN(2, 8, 4);
 }
 
 const DOTS = {
@@ -69,10 +67,8 @@ function train() {
   for (let i = readInt('#trainingIterations'); i--; ) {
     const { x, y, type } =
       trainingData[Math.floor(Math.random() * trainingData.length)];
-    nn.train([x, y], dotEncode(type), learningRate);
+    neuralNetwork.train([x, y], dotEncode(type), learningRate);
   }
-  // Matrix.xxx();
-  // Vector.xxx();
   console.log('train total', performance.now() - t1);
 }
 
@@ -84,13 +80,10 @@ function classifyPoints() {
   for (let i = readInt('#numPoints'); i--; ) {
     const x = Math.random() * 2 - 1; // Random x-coordinate between -1 and 1
     const y = Math.random() * 2 - 1; // Random y-coordinate between -1 and 1
-    const output = nn.feedForward([x, y]); //.toArray();
-    // const output = nn.feedForward([x, y]);
+    const output = neuralNetwork.feedForward([x, y]);
     const predictedColor = dotColor(output);
     drawPoint(x, y, predictedColor);
   }
-  // Matrix.xxx();
-  // Vector.xxx();
   console.log('classify total', performance.now() - t1);
 }
 
