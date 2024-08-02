@@ -1,4 +1,6 @@
-class NeuralNetwork {
+import { sigmoid } from './utils.js';
+
+export class NeuralNetwork {
   #sizes;
   #net;
   #numLayers;

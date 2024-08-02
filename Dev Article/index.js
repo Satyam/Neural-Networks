@@ -1,13 +1,19 @@
+import { NeuralNetwork } from './neuralNetwork.js';
+import { clearCanvas } from './graphics.js';
+import { drawAxes, drawPoint } from './draw.js';
+import { visualizeNetwork } from './visualize.js';
+import { readFloat, readInt, linkButton } from './utils.js';
+
 let neuralNetwork = '';
 
-function readInt(selector) {
-  return parseInt(document.querySelector(selector).value, 10);
+function setupListeners() {
+  linkButton('#initialize', initialize);
+  linkButton('#train', train);
+  linkButton('#classify', classifyPoints);
+  linkButton('#visualize', visualize);
 }
 
-function readFloat(selector) {
-  return parseFloat(document.querySelector(selector).value);
-}
-function initialise() {
+function initialize() {
   clearCanvas();
   neuralNetwork = new NeuralNetwork(2, readInt('#hiddenNodes'), 4);
 }
@@ -37,7 +43,8 @@ function dotColor(output) {
   return dotColors[maxIndex];
 }
 
-initialise();
+setupListeners();
+initialize();
 
 function train() {
   const trainingData = Array.from(
@@ -87,6 +94,6 @@ function classifyPoints() {
   console.log('classify total', performance.now() - t1);
 }
 
-function sigmoid(x) {
-  return 1 / (1 + Math.exp(-x));
+function visualize() {
+  visualizeNetwork(neuralNetwork);
 }

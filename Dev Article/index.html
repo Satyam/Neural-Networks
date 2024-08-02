@@ -6,12 +6,10 @@
     <canvas id="graph" width="600" height="600"></canvas>
     <div class="controls" id="controls">
       <div class="buttons">
-        <button onclick="initialise()">initialise</button>
-        <button onclick="train()">Train</button>
-        <button onclick="classifyPoints()">Classify Points</button>
-        <button onclick="visualizeNeuronsAndWeights()">
-          Visualize Neurons and Weights
-        </button>
+        <button id="initialize">initialize</button>
+        <button id="train">Train</button>
+        <button id="classify">Classify Points</button>
+        <button id="visualize">Visualize Neurons and Weights</button>
       </div>
       <label
         >Training Data Size
@@ -34,8 +32,6 @@
         <input id="numPoints" value="400" />
       </label>
     </div>
-    <script src="neuralNetwork.js"></script>
-    <script src="graphics.js"></script>
-    <script src="index.js"></script>
+    <script src="index.js" type="module"></script>
   </body>
 </html>
