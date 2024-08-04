@@ -1,90 +1,131 @@
 import { width, height, ctx, clearCanvas } from './graphics.js';
 
-export function visualizeNetwork(neuralNetwork) {
-  clearCanvas(); // Clear the canvas
-  drawText(100, 50, 'Input', 'center');
-  visualizeLayer(100, neuralNetwork.inputSize, 'grey', 'Input');
-  drawText(300, 50, 'Hidden', 'center');
-  visualizeLayer(300, neuralNetwork.hiddenSize, 'aqua', 'Hidden', true);
-  drawText(500, 50, 'Output', 'center');
-  visualizeLayer(500, neuralNetwork.outputSize, 'red', 'Output');
-  visualizeWeights();
-}
+const VERTICAL_OFFSET = 100;
 
-function visualizeLayer(startX, neuronCount, color, label, showBias) {
-  const neuronRadius = 20;
-  const neuronSpacing = height / (neuronCount + 1);
-
-  let y = (height - (neuronCount - 1) * neuronSpacing) / 2;
-  for (let i = 0; i < neuronCount; i++, y += neuronSpacing) {
-    drawNeuron(startX, y, neuronRadius, color);
-    if (showBias) {
-      drawBias(startX, y, neuralNetwork.biasHidden[i]);
-    }
-    if (label === 'Input') {
-      drawInputToHiddenWeights(startX, y);
+function calculateNodes(neuralNetwork) {
+  const nodes = [];
+  const numLayers = neuralNetwork.numLayers;
+  const w = width / numLayers;
+  let maxSize = 0;
+  for (let l = 0; l < numLayers; l++) {
+    maxSize = Math.max(maxSize, neuralNetwork.getSize(l));
+  }
+  const ySpacing = (height - VERTICAL_OFFSET) / maxSize;
+  const xSpacing = width / numLayers;
+  const xOffset = xSpacing / 2;
+  for (let l = 0; l < numLayers; l++) {
+    nodes[l] = [];
+    const size = neuralNetwork.getSize(l);
+    const yOffset = (height + VERTICAL_OFFSET - ySpacing * size) / 2;
+    for (let n = 0; n < size; n++) {
+      nodes[l][n] = [l * xSpacing + xOffset, n * ySpacing + yOffset];
     }
   }
+  return nodes;
 }
 
-function drawInputToHiddenWeights(inputX, hiddenY) {
-  for (let i = 0; i < neuralNetwork.inputSize; i++) {
-    for (let j = 0; j < neuralNetwork.hiddenSize; j++) {
-      const weight = neuralNetwork.weightsInputToHidden[j][i];
-      const fromX = inputX;
-      const fromY = hiddenY;
-      const toX = 300;
-      const toY = 100 + j * 100;
-      drawWeight(fromX, fromY, toX, toY, weight, 'red');
-    }
-  }
-}
-
-function visualizeWeights() {
-  for (let i = 0; i < neuralNetwork.outputSize; i++) {
-    for (let j = 0; j < neuralNetwork.hiddenSize; j++) {
-      const weight = neuralNetwork.weightsHiddenToOutput[i][j];
-      const fromX = 300;
-      const fromY = 100 + j * 100; // Increase vertical spacing
-      const toX = 500;
-      const toY = 100 + i * 100; // Increase vertical spacing
-      drawWeight(fromX, fromY, toX, toY, weight);
-    }
-  }
-}
-
-function drawNeuron(x, y, radius, color) {
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.fillStyle = color;
-  ctx.fill();
-  ctx.strokeStyle = 'black';
-  ctx.stroke();
-  ctx.closePath();
-}
-
-function drawText(x, y, text, align) {
+function drawLabels(neuralNetwork, nodes) {
+  const numLayers = neuralNetwork.numLayers;
+  let label;
   ctx.font = '14px Arial';
   ctx.fillStyle = 'black';
-  if (align) ctx.textAlign = align;
-  ctx.fillText(text, x, y);
+  ctx.textAlign = 'center';
+  for (let l = 0; l < numLayers; l++) {
+    switch (l) {
+      case 0:
+        label = 'Input';
+        break;
+      case numLayers - 1:
+        label = 'Output';
+        break;
+      default:
+        label = `[${l}]`;
+    }
+    ctx.fillText(label, nodes[l][0][0], VERTICAL_OFFSET / 2);
+  }
+}
+export function visualizeNetwork(neuralNetwork) {
+  const nodes = calculateNodes(neuralNetwork);
+  clearCanvas();
+  drawLabels(neuralNetwork, nodes);
+  visualizeWeights(neuralNetwork, nodes);
+  visualizeBiases(neuralNetwork, nodes);
+  visualizeLayers(neuralNetwork, nodes);
 }
 
-function drawBias(x, y, bias) {
-  drawText('Bias: ' + bias.toFixed(2), x - 50, y + 30);
+const rgb = (value) => `rgb(
+  ${value < 0 ? -value * 255 : 0}
+  0
+  ${value > 0 ? value * 255 : 0}
+)`;
+
+function visualizeWeights(neuralNetwork, nodes) {
+  const numLayers = neuralNetwork.numLayers;
+  for (let l = 1; l < numLayers; l++) {
+    const weights = neuralNetwork.getWeights(l);
+    const inSize = neuralNetwork.getSize(l - 1);
+    const outSize = neuralNetwork.getSize(l);
+    for (let i = 0; i < inSize; i++) {
+      for (let j = 0; j < outSize; j++) {
+        drawWeight(nodes[l - 1][i], nodes[l][j], weights[j][i]);
+      }
+    }
+  }
 }
 
-function drawWeight(fromX, fromY, toX, toY, weight, color) {
+function drawWeight(src, dest, value) {
   ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
-  ctx.lineTo(toX, toY);
-  ctx.strokeStyle = color || 'green';
+  ctx.strokeStyle = rgb(value);
+  ctx.lineWidth = 5;
+  ctx.moveTo(...src);
+  ctx.lineTo(...dest);
   ctx.stroke();
-
-  const textX = (fromX + toX) / 2;
-  const textY = (fromY + toY) / 2 + toY / 3;
-  ctx.font = '14px Arial';
-  ctx.fillStyle = 'green';
-  ctx.fillText(weight.toFixed(2), textX, textY);
   ctx.closePath();
 }
+
+function visualizeBiases(neuralNetwork, nodes) {
+  const numLayers = neuralNetwork.numLayers;
+  for (let l = 1; l < numLayers; l++) {
+    const size = neuralNetwork.getSize(l);
+    const bias = neuralNetwork.getBiases(l);
+    for (let n = 0; n < size; n++) {
+      const [x, y] = nodes[l][n];
+      drawBias(x, y, bias[n]);
+    }
+  }
+}
+
+function drawBias(x, y, value) {
+  ctx.beginPath();
+  ctx.arc(x, y, 20, 0, 2 * Math.PI);
+  ctx.fillStyle = rgb(value);
+  ctx.fill();
+  // ctx.strokeStyle = 'white';
+  // ctx.stroke();
+  ctx.closePath();
+}
+
+function visualizeLayers(neuralNetwork, nodes) {
+  const numLayers = neuralNetwork.numLayers;
+  for (let l = 0; l < numLayers; l++) {
+    const size = neuralNetwork.getSize(l);
+    const layer = neuralNetwork.getLayer(l);
+    for (let n = 0; n < size; n++) {
+      const [x, y] = nodes[l][n];
+      drawNeuron(x, y, layer[n]);
+    }
+  }
+}
+
+function drawNeuron(x, y, value) {
+  ctx.beginPath();
+  ctx.arc(x, y, 10, 0, 2 * Math.PI);
+  ctx.fillStyle = rgb(value);
+  ctx.fill();
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.closePath();
+}
+
+function drawText(x, y, text, align) {}
