@@ -1,6 +1,7 @@
 import { width, height, ctx, clearCanvas } from './graphics.js';
 
 const VERTICAL_OFFSET = 100;
+const NEURON_SIZE = 20;
 
 function calculateNodes(neuralNetwork) {
   const nodes = [];
@@ -24,30 +25,38 @@ function calculateNodes(neuralNetwork) {
   return nodes;
 }
 
-function drawLabels(neuralNetwork, nodes) {
-  const numLayers = neuralNetwork.numLayers;
-  let label;
+function drawLabels(neuralNetwork, nodes, labels) {
   ctx.font = '14px Arial';
   ctx.fillStyle = 'black';
+
+  const numLayers = neuralNetwork.numLayers;
+  const { top, input, output } = labels;
+  const lbls = top
+    ? top
+    : Array.from({ length: numLayers }, (_, l) => `[${l}]`);
   ctx.textAlign = 'center';
-  for (let l = 0; l < numLayers; l++) {
-    switch (l) {
-      case 0:
-        label = 'Input';
-        break;
-      case numLayers - 1:
-        label = 'Output';
-        break;
-      default:
-        label = `[${l}]`;
-    }
+  lbls.forEach((label, l) => {
     ctx.fillText(label, nodes[l][0][0], VERTICAL_OFFSET / 2);
+  });
+  if (input) {
+    ctx.textAlign = 'right';
+    input.forEach((label, i) => {
+      const [x, y] = nodes[0][i];
+      ctx.fillText(label ?? i, x, y - NEURON_SIZE * 1.5);
+    });
+  }
+  if (output) {
+    ctx.textAlign = 'left';
+    output.forEach((label, i) => {
+      const [x, y] = nodes[numLayers - 1][i];
+      ctx.fillText(label ?? i, x, y - NEURON_SIZE * 1.5);
+    });
   }
 }
-export function visualizeNetwork(neuralNetwork) {
+export function visualizeNetwork(neuralNetwork, labels = {}) {
   const nodes = calculateNodes(neuralNetwork);
   clearCanvas();
-  drawLabels(neuralNetwork, nodes);
+  drawLabels(neuralNetwork, nodes, labels);
   visualizeWeights(neuralNetwork, nodes);
   visualizeBiases(neuralNetwork, nodes);
   visualizeLayers(neuralNetwork, nodes);
@@ -97,7 +106,7 @@ function visualizeBiases(neuralNetwork, nodes) {
 
 function drawBias(x, y, value) {
   ctx.beginPath();
-  ctx.arc(x, y, 20, 0, 2 * Math.PI);
+  ctx.arc(x, y, NEURON_SIZE, 0, 2 * Math.PI);
   ctx.fillStyle = rgb(value);
   ctx.fill();
   // ctx.strokeStyle = 'white';
@@ -119,7 +128,7 @@ function visualizeLayers(neuralNetwork, nodes) {
 
 function drawNeuron(x, y, value) {
   ctx.beginPath();
-  ctx.arc(x, y, 10, 0, 2 * Math.PI);
+  ctx.arc(x, y, NEURON_SIZE / 2, 0, 2 * Math.PI);
   ctx.fillStyle = rgb(value);
   ctx.fill();
   ctx.strokeStyle = 'white';

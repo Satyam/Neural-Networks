@@ -95,5 +95,9 @@ function classifyPoints() {
 }
 
 function visualize() {
-  visualizeNetwork(neuralNetwork);
+  visualizeNetwork(neuralNetwork, {
+    top: ['Input', 'Hidden', 'Output'],
+    input: ['X', 'Y'],
+    output: ['Green (TL)', 'Purple (TR)', 'Blue (BL)', 'Red (BR)'],
+  });
 }
