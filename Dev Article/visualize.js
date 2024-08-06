@@ -26,7 +26,8 @@ function calculateNodes(neuralNetwork) {
 }
 
 function drawLabels(neuralNetwork, nodes, labels) {
-  ctx.font = '14px Arial';
+  ctx.save();
+  ctx.font = 'bold 16px Arial';
   ctx.fillStyle = 'black';
 
   const numLayers = neuralNetwork.numLayers;
@@ -52,11 +53,13 @@ function drawLabels(neuralNetwork, nodes, labels) {
       ctx.fillText(label ?? i, x, y - NEURON_SIZE * 1.5);
     });
   }
+  ctx.restore();
 }
 export function visualizeNetwork(neuralNetwork, labels = {}) {
   const nodes = calculateNodes(neuralNetwork);
   clearCanvas();
   drawLabels(neuralNetwork, nodes, labels);
+  ctx.font = '14px Arial';
   visualizeWeights(neuralNetwork, nodes);
   visualizeBiases(neuralNetwork, nodes);
   visualizeLayers(neuralNetwork, nodes);
@@ -82,13 +85,16 @@ function visualizeWeights(neuralNetwork, nodes) {
   }
 }
 
-function drawWeight(src, dest, value) {
+function drawWeight([x1, y1], [x2, y2], value) {
   ctx.beginPath();
   ctx.strokeStyle = rgb(value);
   ctx.lineWidth = 5;
-  ctx.moveTo(...src);
-  ctx.lineTo(...dest);
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
   ctx.stroke();
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillText(value.toFixed(3), (x1 + x2) / 2, (y1 + y2) / 2);
   ctx.closePath();
 }
 
@@ -106,11 +112,11 @@ function visualizeBiases(neuralNetwork, nodes) {
 
 function drawBias(x, y, value) {
   ctx.beginPath();
-  ctx.arc(x, y, NEURON_SIZE, 0, 2 * Math.PI);
   ctx.fillStyle = rgb(value);
-  ctx.fill();
-  // ctx.strokeStyle = 'white';
-  // ctx.stroke();
+  ctx.fillRect(x - NEURON_SIZE, y - NEURON_SIZE, NEURON_SIZE, 2 * NEURON_SIZE);
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillText(value.toFixed(3), x + 1, y - NEURON_SIZE);
   ctx.closePath();
 }
 
@@ -134,6 +140,13 @@ function drawNeuron(x, y, value) {
   ctx.strokeStyle = 'white';
   ctx.lineWidth = 1;
   ctx.stroke();
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillText(
+    typeof value === 'number' ? value.toFixed(3) : '??',
+    x + NEURON_SIZE,
+    y
+  );
   ctx.closePath();
 }
 
