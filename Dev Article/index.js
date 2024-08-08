@@ -1,5 +1,5 @@
 import { NeuralNetwork } from './neuralNetwork.js';
-import { clearCanvas } from './graphics.js';
+import { clearCanvas, clearSVG } from './graphics.js';
 import { drawAxes, drawPoint } from './draw.js';
 import { visualizeNetwork } from './visualize.js';
 import { readFloat, readInt, linkButton } from './utils.js';
@@ -15,6 +15,7 @@ function setupListeners() {
 
 function initialize() {
   clearCanvas();
+  clearSVG();
   neuralNetwork = new NeuralNetwork(2, readInt('#hiddenNodes'), 4);
 }
 
@@ -81,6 +82,7 @@ function train() {
 
 function classifyPoints() {
   clearCanvas();
+  clearSVG();
   drawAxes();
   const t1 = performance.now();
 

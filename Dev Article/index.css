@@ -18,3 +18,39 @@ label {
 canvas {
   outline: 2px solid #666;
 }
+
+svg {
+  outline: 2px solid #666;
+}
+
+.axis {
+  stroke: #666;
+  stroke-width: 1;
+}
+
+.point {
+  /* eslint-disable-next-line */
+  r: 5px;
+}
+.toplabel,
+.inputlabel,
+.outputlabel {
+  fill: black;
+  font: bold 16px sans-serif;
+}
+.toplabel {
+  text-anchor: middle;
+}
+.inputlabel {
+  text-anchor: end;
+}
+.outputlabel {
+  text-anchor: start;
+}
+.weight line {
+  stroke-width: 2;
+}
+.weight text {
+  fill: black;
+  font: 14px sans-serif;
+}

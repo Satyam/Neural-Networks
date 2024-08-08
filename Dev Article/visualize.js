@@ -1,4 +1,14 @@
-import { width, height, ctx, clearCanvas } from './graphics.js';
+import {
+  width,
+  height,
+  ctx,
+  clearCanvas,
+  clearSVG,
+  svg,
+  WIDTH,
+  HEIGHT,
+  appendSVGEl,
+} from './graphics.js';
 
 const VERTICAL_OFFSET = 100;
 const NEURON_SIZE = 20;
@@ -38,12 +48,24 @@ function drawLabels(neuralNetwork, nodes, labels) {
   ctx.textAlign = 'center';
   lbls.forEach((label, l) => {
     ctx.fillText(label, nodes[l][0][0], VERTICAL_OFFSET / 2);
+    appendSVGEl(
+      svg,
+      'text',
+      { x: nodes[l][0][0], y: VERTICAL_OFFSET / 2, class: 'toplabel' },
+      label
+    );
   });
   if (input) {
     ctx.textAlign = 'right';
     input.forEach((label, i) => {
       const [x, y] = nodes[0][i];
       ctx.fillText(label ?? i, x, y - NEURON_SIZE * 1.5);
+      appendSVGEl(
+        svg,
+        'text',
+        { x, y: y - NEURON_SIZE * 1.5, class: 'inputlabel' },
+        label ?? i
+      );
     });
   }
   if (output) {
@@ -51,6 +73,12 @@ function drawLabels(neuralNetwork, nodes, labels) {
     output.forEach((label, i) => {
       const [x, y] = nodes[numLayers - 1][i];
       ctx.fillText(label ?? i, x, y - NEURON_SIZE * 1.5);
+      appendSVGEl(
+        svg,
+        'text',
+        { x, y: y - NEURON_SIZE * 1.5, class: 'outputlabel' },
+        label ?? i
+      );
     });
   }
   ctx.restore();
@@ -58,6 +86,7 @@ function drawLabels(neuralNetwork, nodes, labels) {
 export function visualizeNetwork(neuralNetwork, labels = {}) {
   const nodes = calculateNodes(neuralNetwork);
   clearCanvas();
+  clearSVG();
   drawLabels(neuralNetwork, nodes, labels);
   ctx.font = '14px Arial';
   visualizeWeights(neuralNetwork, nodes);
@@ -66,9 +95,9 @@ export function visualizeNetwork(neuralNetwork, labels = {}) {
 }
 
 const rgb = (value) => `rgb(
-  ${value < 0 ? -value * 255 : 0}
-  0
-  ${value > 0 ? value * 255 : 0}
+  ${value < 0 ? Math.floor(-value * 255) : 0} 
+  0 
+  ${value > 0 ? Math.floor(value * 255) : 0}
 )`;
 
 function visualizeWeights(neuralNetwork, nodes) {
@@ -96,6 +125,23 @@ function drawWeight([x1, y1], [x2, y2], value) {
   ctx.textAlign = 'left';
   ctx.fillText(value.toFixed(3), (x1 + x2) / 2, (y1 + y2) / 2);
   ctx.closePath();
+  const g = appendSVGEl(svg, 'g', { class: 'weight' });
+  appendSVGEl(g, 'line', {
+    x1,
+    y1,
+    x2,
+    y2,
+    stroke: rgb(value),
+  });
+  appendSVGEl(
+    g,
+    'text',
+    {
+      x: (x1 + x2) / 2,
+      y: (y1 + y2) / 2,
+    },
+    value.toFixed(3)
+  );
 }
 
 function visualizeBiases(neuralNetwork, nodes) {
@@ -118,6 +164,25 @@ function drawBias(x, y, value) {
   ctx.textAlign = 'left';
   ctx.fillText(value.toFixed(3), x + 1, y - NEURON_SIZE);
   ctx.closePath();
+  const g = appendSVGEl(svg, 'g', {
+    class: 'bias',
+  });
+  appendSVGEl(g, 'rect', {
+    x: x - NEURON_SIZE,
+    y: y - NEURON_SIZE,
+    width: NEURON_SIZE,
+    height: 2 * NEURON_SIZE,
+    fill: rgb(value),
+  });
+  appendSVGEl(
+    g,
+    'text',
+    {
+      x: x + 1,
+      y: y - NEURON_SIZE,
+    },
+    value.toFixed(3)
+  );
 }
 
 function visualizeLayers(neuralNetwork, nodes) {
@@ -148,6 +213,22 @@ function drawNeuron(x, y, value) {
     y
   );
   ctx.closePath();
+  const g = appendSVGEl(svg, 'g', {
+    class: 'bias',
+  });
+  appendSVGEl(g, 'circle', {
+    cx: x,
+    cy: y,
+    r: NEURON_SIZE / 2,
+    fill: rgb(value),
+  });
+  appendSVGEl(
+    g,
+    'text',
+    {
+      x: x + NEURON_SIZE,
+      y,
+    },
+    typeof value === 'number' ? value.toFixed(3) : '??'
+  );
 }
-
-function drawText(x, y, text, align) {}
