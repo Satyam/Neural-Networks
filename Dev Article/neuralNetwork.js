@@ -90,4 +90,30 @@ export class NeuralNetwork {
       prevWeights = weights;
     }
   }
+  normalize() {
+    let maxWeight = 0;
+    let maxBias = 0;
+    const numLayers = this.numLayers;
+    for (let l = 1; l < numLayers; l++) {
+      const { weights, biases, size } = this.#net[l];
+      const prevSize = this.#net[l - 1].size;
+      for (let n = 0; n < size; n++) {
+        maxBias = Math.max(Math.abs(biases[n]), maxBias);
+        for (let p = 0; p < prevSize; p++) {
+          maxWeight = Math.max(Math.abs(weights[n][p]), maxWeight);
+        }
+      }
+    }
+    console.log({ maxWeight, maxBias });
+    for (let l = 1; l < numLayers; l++) {
+      const { weights, biases, size } = this.#net[l];
+      const prevSize = this.#net[l - 1].size;
+      for (let n = 0; n < size; n++) {
+        biases[n] = biases[n] / maxBias;
+        for (let p = 0; p < prevSize; p++) {
+          weights[n][p] = weights[n][p] / maxWeight;
+        }
+      }
+    }
+  }
 }
