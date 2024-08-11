@@ -1,11 +1,3 @@
-const canvas = document.getElementById('canvas');
-export const ctx = canvas.getContext('2d');
-
-export const width = canvas.width;
-export const height = canvas.height;
-
-export const clearCanvas = () => ctx.clearRect(0, 0, width, height);
-
 export const svg = document.getElementById('svg');
 
 export const SVG_NS = 'http://www.w3.org/2000/svg';

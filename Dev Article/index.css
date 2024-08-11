@@ -15,10 +15,6 @@ label {
   padding: 10px;
 }
 
-canvas {
-  outline: 2px solid #666;
-}
-
 svg {
   outline: 2px solid #666;
 }
@@ -50,7 +46,9 @@ svg {
 .weight line {
   stroke-width: 2;
 }
-.weight text {
+.weight text,
+.bias text,
+.neuron text {
   fill: black;
   font: 14px sans-serif;
 }
