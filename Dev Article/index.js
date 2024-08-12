@@ -15,7 +15,22 @@ function setupListeners() {
 
 function initialize() {
   clearSVG();
-  neuralNetwork = new NeuralNetwork(2, readInt('#hiddenNodes'), 4);
+  const hiddenLayers = document.getElementById('hiddenLayers').value.trim();
+  const sizes = hiddenLayers
+    ? hiddenLayers.split(',').map((size) => {
+        size = parseInt(size, 10);
+        if (Number.isNaN(size)) {
+          alert('Hidden layers must be a comma-separted list of integers');
+          throw new Error(
+            'Hidden layers must be a comma-separted list of integers'
+          );
+        }
+        return size;
+      })
+    : null;
+  neuralNetwork = sizes
+    ? new NeuralNetwork(2, ...sizes, 4)
+    : new NeuralNetwork(2, 4);
 }
 
 const DOTS = {
@@ -96,7 +111,6 @@ function classifyPoints() {
 
 function visualize() {
   visualizeNetwork(neuralNetwork, {
-    top: ['Input', 'Hidden', 'Output'],
     input: ['X', 'Y'],
     output: ['Green (TL)', 'Purple (TR)', 'Blue (BL)', 'Red (BR)'],
   });
