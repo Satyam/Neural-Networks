@@ -76,7 +76,6 @@ function train() {
       trainingData[Math.floor(Math.random() * trainingData.length)];
     neuralNetwork.train([x, y], dotEncode(type), learningRate);
   }
-  neuralNetwork.normalize();
   console.log('train total', performance.now() - t1);
 }
 
