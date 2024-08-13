@@ -1,4 +1,11 @@
-import { clearSVG, svg, WIDTH, HEIGHT, appendSVGEl } from './graphics.js';
+import {
+  clearSVG,
+  svg,
+  WIDTH,
+  HEIGHT,
+  appendSVGEl,
+  addFloat,
+} from './graphics.js';
 
 const VERTICAL_OFFSET = 100;
 const NEURON_SIZE = 20;
@@ -70,6 +77,7 @@ export function visualizeNetwork(neuralNetwork, labels = {}) {
   visualizeWeights(neuralNetwork, nodes);
   visualizeBiases(neuralNetwork, nodes);
   visualizeLayers(neuralNetwork, nodes);
+  addFloat();
 }
 
 const rgb = (value) => `rgb(

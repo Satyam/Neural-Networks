@@ -1,5 +1,5 @@
 import { NeuralNetwork } from './neuralNetwork.js';
-import { clearSVG, svg } from './graphics.js';
+import { clearSVG, addFloat } from './graphics.js';
 import { drawAxes, drawPoint } from './draw.js';
 import { visualizeNetwork } from './visualize.js';
 import { readFloat, readInt, linkButton } from './utils.js';
@@ -105,6 +105,7 @@ function classifyPoints() {
     drawPoint(x, y, predictedColor);
   }
   console.log('classify total', performance.now() - t1);
+  addFloat();
 }
 
 function visualize() {

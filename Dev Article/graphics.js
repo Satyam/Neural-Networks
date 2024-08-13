@@ -8,8 +8,10 @@ svg.setAttribute('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 svg.setAttribute('width', WIDTH);
 svg.setAttribute('height', HEIGHT);
 
+let float;
 export const clearSVG = () => {
   svg.innerHTML = '';
+  float = null;
 };
 
 export function appendSVGEl(parent, tag, attrs = {}, children) {
@@ -39,25 +41,54 @@ export function appendSVGEl(parent, tag, attrs = {}, children) {
     }
   };
   for (const [attr, value] of Object.entries(attrs)) {
-    if (attr === 'style') {
-      switch (typeof value) {
-        case 'string':
-          el.style = value;
-          break;
-        case 'object':
-          for (const [style, v] of Object.entries(value)) {
-            el.style[style] = v;
-          }
-          break;
-        default:
-          throw new Error(
-            `Unknown value type for style attribute: ${typeof value}`
-          );
-      }
-    } else {
-      el.setAttribute(attr, value);
+    switch (attr) {
+      case 'style':
+        switch (typeof value) {
+          case 'string':
+            el.style = value;
+            break;
+          case 'object':
+            for (const [style, v] of Object.entries(value)) {
+              el.style[style] = v;
+            }
+            break;
+          default:
+            throw new Error(
+              `Unknown value type for style attribute: ${typeof value}`
+            );
+        }
+        break;
+      case 'data':
+        for (const [data, v] of Object.entries(value)) {
+          el.dataset[data] = v;
+        }
+        break;
+      default:
+        el.setAttribute(attr, value);
     }
     appendChildren(children);
   }
   return parent.appendChild(el);
 }
+
+export function addFloat() {
+  float = appendSVGEl(svg, 'text', { class: 'float' });
+}
+svg.addEventListener('mousemove', (ev) => {
+  const {
+    target: {
+      dataset: { label },
+    },
+    x,
+    y,
+  } = ev;
+  if (float) {
+    if (label) {
+      float.setAttributeNS(SVG_NS, 'x', x);
+      float.setAttributeNS(SVG_NS, 'y', y);
+      float.textContent = label;
+      // } else {
+      //   float.style.display = 'none';
+    }
+  }
+});
