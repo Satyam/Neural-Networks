@@ -1,5 +1,5 @@
 import { NeuralNetwork } from './neuralNetwork.js';
-import { clearSVG } from './graphics.js';
+import { clearSVG, svg } from './graphics.js';
 import { drawAxes, drawPoint } from './draw.js';
 import { visualizeNetwork } from './visualize.js';
 import { readFloat, readInt, linkButton } from './utils.js';
@@ -13,24 +13,22 @@ function setupListeners() {
   linkButton('#visualize', visualize);
 }
 
+const rxListOfIntegers = /^((\s*(\d+\s*\,\s*)*\d+\s*)|\s*)$/;
 function initialize() {
   clearSVG();
   const hiddenLayers = document.getElementById('hiddenLayers').value.trim();
+  if (!rxListOfIntegers.test(hiddenLayers)) {
+    alert('Hidden layers must be a comma-separted list of positive integers');
+    return;
+  }
   const sizes = hiddenLayers
-    ? hiddenLayers.split(',').map((size) => {
-        size = parseInt(size, 10);
-        if (Number.isNaN(size)) {
-          alert('Hidden layers must be a comma-separted list of integers');
-          throw new Error(
-            'Hidden layers must be a comma-separted list of integers'
-          );
-        }
-        return size;
-      })
-    : null;
-  neuralNetwork = sizes
-    ? new NeuralNetwork(2, ...sizes, 4)
-    : new NeuralNetwork(2, 4);
+    ? hiddenLayers.split(',').map((size) => parseInt(size, 10))
+    : [];
+  if (sizes.some((size) => size < 2)) {
+    alert('Hidden layers must have 2 or more neurons');
+    return;
+  }
+  neuralNetwork = new NeuralNetwork(2, ...sizes, 4);
 }
 
 const DOTS = {
