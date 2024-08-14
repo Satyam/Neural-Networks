@@ -8,10 +8,8 @@ svg.setAttribute('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
 svg.setAttribute('width', WIDTH);
 svg.setAttribute('height', HEIGHT);
 
-let float;
 export const clearSVG = () => {
   svg.innerHTML = '';
-  float = null;
 };
 
 export function appendSVGEl(parent, tag, attrs = {}, children) {
@@ -19,7 +17,7 @@ export function appendSVGEl(parent, tag, attrs = {}, children) {
   const appendChildren = (children) => {
     switch (typeof children) {
       case 'string':
-        el.innerHTML = children;
+        el.textContent = children;
         break;
       case 'undefined':
         break;
@@ -66,29 +64,7 @@ export function appendSVGEl(parent, tag, attrs = {}, children) {
       default:
         el.setAttribute(attr, value);
     }
-    appendChildren(children);
   }
+  appendChildren(children);
   return parent.appendChild(el);
 }
-
-export function addFloat() {
-  float = appendSVGEl(svg, 'text', { class: 'float' });
-}
-svg.addEventListener('mousemove', (ev) => {
-  const {
-    target: {
-      dataset: { label },
-    },
-    x,
-    y,
-  } = ev;
-  if (float) {
-    if (label) {
-      float.setAttributeNS(SVG_NS, 'x', x);
-      float.setAttributeNS(SVG_NS, 'y', y);
-      float.textContent = label;
-      // } else {
-      //   float.style.display = 'none';
-    }
-  }
-});

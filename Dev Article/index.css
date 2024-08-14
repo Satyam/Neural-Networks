@@ -43,17 +43,6 @@ svg {
 .outputlabel {
   text-anchor: start;
 }
-.weight line {
-  stroke-width: 2;
-}
-.weight text,
-.bias text,
-.neuron text {
-  fill: black;
-  font: 14px sans-serif;
-}
-
-.float {
-  fill: black;
-  font: 14px sans-serif;
+.weight {
+  stroke-width: 4;
 }
