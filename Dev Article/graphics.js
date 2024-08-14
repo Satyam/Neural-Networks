@@ -12,7 +12,17 @@ export const clearSVG = () => {
   svg.innerHTML = '';
 };
 
-export function appendSVGEl(parent, tag, attrs = {}, children) {
+export function appendToSVG(el) {
+  if (el[Symbol.iterator]) {
+    for (const ch of el) {
+      appendToSVG(ch);
+    }
+  } else {
+    svg.appendChild(el);
+  }
+}
+
+export function createSVGEl(tag, attrs = {}, children) {
   const el = document.createElementNS(SVG_NS, tag);
   const appendChildren = (children) => {
     switch (typeof children) {
@@ -38,6 +48,7 @@ export function appendSVGEl(parent, tag, attrs = {}, children) {
         );
     }
   };
+  // attributes
   for (const [attr, value] of Object.entries(attrs)) {
     switch (attr) {
       case 'style':
@@ -66,5 +77,5 @@ export function appendSVGEl(parent, tag, attrs = {}, children) {
     }
   }
   appendChildren(children);
-  return parent.appendChild(el);
+  return el;
 }
