@@ -96,15 +96,25 @@ function visualizeWeights(neuralNetwork, nodes) {
     const outSize = neuralNetwork.getSize(l);
     for (let i = 0; i < inSize; i++) {
       for (let j = 0; j < outSize; j++) {
-        drawWeight(nodes[l - 1][i], nodes[l][j], weights[j][i]);
         maxWeight = Math.max(Math.abs(weights[j][i]), maxWeight);
       }
     }
   }
   console.log({ maxWeight });
+  for (let l = 1; l < numLayers; l++) {
+    const weights = neuralNetwork.getWeights(l);
+    const inSize = neuralNetwork.getSize(l - 1);
+    const outSize = neuralNetwork.getSize(l);
+    for (let i = 0; i < inSize; i++) {
+      const prevNode = nodes[l - 1][i];
+      for (let j = 0; j < outSize; j++) {
+        drawWeight(prevNode, nodes[l][j], weights[j][i], maxWeight);
+      }
+    }
+  }
 }
 
-function drawWeight([x1, y1], [x2, y2], value) {
+function drawWeight([x1, y1], [x2, y2], value, maxWeight) {
   appendToSVG(
     createSVGEl(
       'line',
@@ -113,7 +123,7 @@ function drawWeight([x1, y1], [x2, y2], value) {
         y1,
         x2,
         y2,
-        stroke: rgb(value),
+        stroke: rgb(value / maxWeight),
         class: 'weight',
       },
       createSVGEl('title', {}, value.toFixed(3))
@@ -128,15 +138,21 @@ function visualizeBiases(neuralNetwork, nodes) {
     const size = neuralNetwork.getSize(l);
     const bias = neuralNetwork.getBiases(l);
     for (let n = 0; n < size; n++) {
-      const [x, y] = nodes[l][n];
-      drawBias(x, y, bias[n]);
       maxBias = Math.max(Math.abs(bias[n]), maxBias);
     }
   }
   console.log({ maxBias });
+  for (let l = 1; l < numLayers; l++) {
+    const size = neuralNetwork.getSize(l);
+    const bias = neuralNetwork.getBiases(l);
+    for (let n = 0; n < size; n++) {
+      const [x, y] = nodes[l][n];
+      drawBias(x, y, bias[n], maxBias);
+    }
+  }
 }
 
-function drawBias(x, y, value) {
+function drawBias(x, y, value, maxBias) {
   appendToSVG(
     createSVGEl(
       'rect',
@@ -146,7 +162,7 @@ function drawBias(x, y, value) {
         y: y - NEURON_SIZE,
         width: NEURON_SIZE,
         height: 2 * NEURON_SIZE,
-        fill: rgb(value),
+        fill: rgb(value / maxBias),
       },
       createSVGEl('title', {}, value.toFixed(3))
     )
