@@ -3,15 +3,13 @@ import { svg, WIDTH, HEIGHT, appendSVGEl } from './graphics.js';
 const pointRadius = 5; // Radius of the points
 
 export function drawPoint(x, y, color) {
-  appendSVGEl(svg, 'circle', {
+  const circle = appendSVGEl(svg, 'circle', {
     cx: ((x + 1) * WIDTH) / 2,
     cy: ((1 - y) * HEIGHT) / 2,
     class: 'point',
     fill: color,
-    data: {
-      label: `[${x}:${y}]`,
-    },
   });
+  appendSVGEl(circle, 'title', {}, `[${x.toFixed(3)}, ${y.toFixed(3)}]`);
 }
 
 export function drawAxes() {

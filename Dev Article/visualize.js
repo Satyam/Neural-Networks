@@ -1,11 +1,4 @@
-import {
-  clearSVG,
-  svg,
-  WIDTH,
-  HEIGHT,
-  appendSVGEl,
-  addFloat,
-} from './graphics.js';
+import { clearSVG, svg, WIDTH, HEIGHT, appendSVGEl } from './graphics.js';
 
 const VERTICAL_OFFSET = 100;
 const NEURON_SIZE = 20;
@@ -77,7 +70,6 @@ export function visualizeNetwork(neuralNetwork, labels = {}) {
   visualizeWeights(neuralNetwork, nodes);
   visualizeBiases(neuralNetwork, nodes);
   visualizeLayers(neuralNetwork, nodes);
-  addFloat();
 }
 
 const rgb = (value) => `rgb(
@@ -104,23 +96,15 @@ function visualizeWeights(neuralNetwork, nodes) {
 }
 
 function drawWeight([x1, y1], [x2, y2], value) {
-  const g = appendSVGEl(svg, 'g', { class: 'weight' });
-  appendSVGEl(g, 'line', {
+  const line = appendSVGEl(svg, 'line', {
     x1,
     y1,
     x2,
     y2,
     stroke: rgb(value),
+    class: 'weight',
   });
-  appendSVGEl(
-    g,
-    'text',
-    {
-      x: (x1 + x2) / 2,
-      y: (y1 + y2) / 2,
-    },
-    value.toFixed(3)
-  );
+  appendSVGEl(line, 'title', {}, value.toFixed(3));
 }
 
 function visualizeBiases(neuralNetwork, nodes) {
@@ -139,25 +123,15 @@ function visualizeBiases(neuralNetwork, nodes) {
 }
 
 function drawBias(x, y, value) {
-  const g = appendSVGEl(svg, 'g', {
+  const bias = appendSVGEl(svg, 'rect', {
     class: 'bias',
-  });
-  appendSVGEl(g, 'rect', {
     x: x - NEURON_SIZE,
     y: y - NEURON_SIZE,
     width: NEURON_SIZE,
     height: 2 * NEURON_SIZE,
     fill: rgb(value),
   });
-  appendSVGEl(
-    g,
-    'text',
-    {
-      x: x + 1,
-      y: y - NEURON_SIZE,
-    },
-    value.toFixed(3)
-  );
+  appendSVGEl(bias, 'title', {}, value.toFixed(3));
 }
 
 function visualizeLayers(neuralNetwork, nodes) {
@@ -173,22 +147,17 @@ function visualizeLayers(neuralNetwork, nodes) {
 }
 
 function drawNeuron(x, y, value) {
-  const g = appendSVGEl(svg, 'g', {
+  const neuron = appendSVGEl(svg, 'circle', {
     class: 'neuron',
-  });
-  appendSVGEl(g, 'circle', {
     cx: x,
     cy: y,
     r: NEURON_SIZE / 2,
     fill: rgb(value),
   });
   appendSVGEl(
-    g,
-    'text',
-    {
-      x: x + NEURON_SIZE,
-      y,
-    },
+    neuron,
+    'title',
+    {},
     typeof value === 'number' ? value.toFixed(3) : '??'
   );
 }
