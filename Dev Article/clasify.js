@@ -1,10 +1,4 @@
-import {
-  WIDTH,
-  HEIGHT,
-  appendToSVG,
-  createSVGEl,
-  clearSVG,
-} from './graphics.js';
+import { WIDTH, HEIGHT, appendToSVG, createSVGEl, clearSVG } from './svg.js';
 import { readInt } from './utils.js';
 
 export function classify(neuralNetwork) {

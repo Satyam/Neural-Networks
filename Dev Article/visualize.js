@@ -1,10 +1,4 @@
-import {
-  clearSVG,
-  WIDTH,
-  HEIGHT,
-  appendToSVG,
-  createSVGEl,
-} from './graphics.js';
+import { clearSVG, WIDTH, HEIGHT, appendToSVG, createSVGEl } from './svg.js';
 
 const VERTICAL_OFFSET = 100;
 const NEURON_SIZE = 20;

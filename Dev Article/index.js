@@ -1,5 +1,5 @@
 import { NeuralNetwork } from './neuralNetwork.js';
-import { clearSVG } from './graphics.js';
+import { clearSVG } from './svg.js';
 import { classify } from './clasify.js';
 import { visualizeNetwork } from './visualize.js';
 import { train } from './train.js';
