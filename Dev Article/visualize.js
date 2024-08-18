@@ -92,23 +92,24 @@ function visualizeWeights(neuralNetwork, nodes) {
   const numLayers = neuralNetwork.numLayers;
   for (let l = 1; l < numLayers; l++) {
     const weights = neuralNetwork.getWeights(l);
-    const inSize = neuralNetwork.getSize(l - 1);
-    const outSize = neuralNetwork.getSize(l);
-    for (let i = 0; i < inSize; i++) {
-      for (let j = 0; j < outSize; j++) {
-        maxWeight = Math.max(Math.abs(weights[j][i]), maxWeight);
+    const prevSize = neuralNetwork.getSize(l - 1);
+    const thisSize = neuralNetwork.getSize(l);
+    for (let n = 0; n < thisSize; n++) {
+      const thisWeights = weights[n];
+      for (let p = 0; p < prevSize; p++) {
+        maxWeight = Math.max(Math.abs(thisWeights[p]), maxWeight);
       }
     }
   }
-  console.log({ maxWeight });
   for (let l = 1; l < numLayers; l++) {
     const weights = neuralNetwork.getWeights(l);
-    const inSize = neuralNetwork.getSize(l - 1);
-    const outSize = neuralNetwork.getSize(l);
-    for (let i = 0; i < inSize; i++) {
-      const prevNode = nodes[l - 1][i];
-      for (let j = 0; j < outSize; j++) {
-        drawWeight(prevNode, nodes[l][j], weights[j][i], maxWeight);
+    const prevSize = neuralNetwork.getSize(l - 1);
+    const thisSize = neuralNetwork.getSize(l);
+    for (let n = 0; n < thisSize; n++) {
+      const thisNode = nodes[l][n];
+      const thisWeights = weights[n];
+      for (let p = 0; p < prevSize; p++) {
+        drawWeight(nodes[l - 1][p], thisNode, thisWeights[p], maxWeight);
       }
     }
   }
@@ -141,7 +142,6 @@ function visualizeBiases(neuralNetwork, nodes) {
       maxBias = Math.max(Math.abs(bias[n]), maxBias);
     }
   }
-  console.log({ maxBias });
   for (let l = 1; l < numLayers; l++) {
     const size = neuralNetwork.getSize(l);
     const bias = neuralNetwork.getBiases(l);
