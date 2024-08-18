@@ -31,68 +31,55 @@ function initialize() {
   neuralNetwork = new NeuralNetwork(2, ...sizes, 4);
 }
 
-const DOTS = {
-  BLUE: 0,
-  GREEN: 1,
-  RED: 2,
-  PURPLE: 3,
-};
-
-const dotColors = ['blue', 'green', 'red', 'purple'];
-
-const dotEncodings = [
-  [1, 0, 0, 0], // BLUE
-  [0, 1, 0, 0], // GREEN
-  [0, 0, 1, 0], // RED
-  [0, 0, 0, 1], // PURPLE
-];
-
-function dotEncode(type) {
-  return dotEncodings[type];
-}
-
-function dotColor(output) {
-  const maxIndex = output.indexOf(Math.max(...output));
-  return dotColors[maxIndex];
-}
-
 setupListeners();
 initialize();
 
 function train() {
+  const t1 = performance.now();
+  const trainingDataSize = readInt('#trainingDataSize');
+  const dotEncodings = [
+    [1, 0, 0, 0], // BLUE
+    [0, 1, 0, 0], // GREEN
+    [0, 0, 1, 0], // RED
+    [0, 0, 0, 1], // PURPLE
+  ];
   const trainingData = Array.from(
     {
       // Adjust the number of data points as needed
-      length: readInt('#trainingDataSize'),
+      length: trainingDataSize,
     },
     () => {
       const x = Math.random() * 2 - 1; // Random x value between -1 and 1
       const y = Math.random() * 2 - 1; // Random y value between -1 and 1
 
-      let type;
+      let encoding;
       if (x <= 0 && y < 0) {
-        type = DOTS.BLUE;
+        encoding = dotEncodings[0]; // blue
       } else if (x <= 0 && y > 0) {
-        type = DOTS.GREEN;
+        encoding = dotEncodings[1]; // green
       } else if (x > 0 && y <= 0) {
-        type = DOTS.RED;
+        encoding = dotEncodings[2]; //red
       } else {
-        type = DOTS.PURPLE;
+        encoding = dotEncodings[3]; // purple
       }
-      return { x, y, type };
+      return { x, y, encoding };
     }
   );
   const learningRate = readFloat('#learningRate');
-  const t1 = performance.now();
   for (let i = readInt('#trainingIterations'); i--; ) {
-    const { x, y, type } =
-      trainingData[Math.floor(Math.random() * trainingData.length)];
-    neuralNetwork.train([x, y], dotEncode(type), learningRate);
+    const { x, y, encoding } =
+      trainingData[Math.floor(Math.random() * trainingDataSize)];
+    neuralNetwork.train([x, y], encoding, learningRate);
   }
   console.log('train total', performance.now() - t1);
 }
 
 function classifyPoints() {
+  const dotColors = ['blue', 'green', 'red', 'purple'];
+  function dotColor(output) {
+    const maxIndex = output.indexOf(Math.max(...output));
+    return dotColors[maxIndex];
+  }
   clearSVG();
   drawAxes();
   const t1 = performance.now();
