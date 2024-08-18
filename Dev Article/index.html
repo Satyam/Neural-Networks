@@ -5,33 +5,42 @@
   <body>
     <svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
     <div class="controls" id="controls">
-      <div class="buttons">
-        <button id="initialize">initialize</button>
-        <button id="train">Train</button>
-        <button id="classify">Classify Points</button>
-        <button id="visualize">Visualize Neurons and Weights</button>
-      </div>
-      <label
-        >Training Data Size
-        <input id="trainingDataSize" value="5000" />
-      </label>
-      <label
-        >training iterations
-        <input id="trainingIterations" value="50000" />
-      </label>
-      <label
-        >Learning Rate
-        <input id="learningRate" value="0.03" />
-      </label>
-      <label
-        >Comma-separated number of nodes of hidden layers. <br />
-        An empty string produces no hidden layers.
-        <input id="hiddenLayers" value="8" />
-      </label>
-      <label
-        >points to classify
-        <input id="numPoints" value="400" />
-      </label>
+      <button id="initialize">initialize</button>
+
+      <fieldset>
+        <legend>Train</legend>
+        <label
+          >Training Data Size
+          <input id="trainingDataSize" value="5000" />
+        </label>
+        <label
+          >Training iterations
+          <input id="trainingIterations" value="50000" />
+        </label>
+        <label
+          >Learning Rate
+          <input id="learningRate" value="0.03" />
+        </label>
+        <label
+          >Comma-separated number of nodes of hidden layers. <br />
+          An empty string produces no hidden layers.
+          <input id="hiddenLayers" value="" />
+        </label>
+        <div class="buttons">
+          <button id="train">Train</button>
+          <button id="visualize">Visualize Neurons and Weights</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Classify</legend>
+        <label
+          >points to classify
+          <input id="numPoints" value="400" />
+        </label>
+        <div class="buttons">
+          <button id="classify">Classify Points</button>
+        </div>
+      </fieldset>
     </div>
     <script src="index.js" type="module"></script>
   </body>

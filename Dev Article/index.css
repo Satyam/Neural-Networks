@@ -8,11 +8,16 @@ label {
   display: block;
   padding: 10px;
 }
-.buttons {
+button {
+  padding: 10px;
+}
+fieldset {
+  margin: 1em 0;
+}
+fieldset .buttons {
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 10px;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 svg {
