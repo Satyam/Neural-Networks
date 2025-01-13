@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Numberlink</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Numberlink</h1>
+    <div id="grid"></div>
+    <div id="controls">
+      <fieldset class="size">
+        <legend>Tamaño</legend>
+        <label
+          >Ancho<input
+            id="width"
+            type="number"
+            value="10"
+            min="2"
+            max="40"
+            step="1"
+        /></label>
+        <label
+          >Alto<input
+            id="height"
+            type="number"
+            value="10"
+            min="2"
+            max="40"
+            step="1"
+        /></label>
+      </fieldset>
+      <fieldset class="buttons">
+        <button id="generate">Generar</button>
+        <button id="solve">Resolver</button>
+      </fieldset>
+    </div>
+    <script type="module" src="main.mjs"></script>
+  </body>
+</html>
