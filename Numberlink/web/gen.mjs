@@ -33,7 +33,7 @@ export function generate(width, height) {
   function tile() {
     const table = [];
     for (let y = 0; y < height; y++) {
-      table[y] = new Uint8Array(width);
+      table[y] = new Int16Array(width);
     }
     let alpha = 0;
     for (let y = 0; y < height - 1; y += 2) {
@@ -153,6 +153,7 @@ export function generate(width, height) {
           const y4 = y3 + DY[i];
           if (
             inside(x4, y4, width, height) &&
+            !(x3 === x1 && y3 === y1 && x4 === x2 && y4 === y2) &&
             table[y3][x3] === table[y1][x1] &&
             table[y4][x4] === table[y2][x2]
           ) {
@@ -195,7 +196,7 @@ export function generate(width, height) {
     let alpha = -1;
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        if (table[y[x] >= 0]) {
+        if (table[y][x] >= 0) {
           fill(x, y, alpha);
           alpha -= 1;
         }
@@ -208,6 +209,18 @@ export function generate(width, height) {
     }
     return -alpha - 1;
   }
+
+  // Just an idea ...
+  // function forEachNeighbour(x, y, fn) {
+  //   for (let i = 0; i < 4; i++) {
+  //     const x1 = x + DX[i];
+  //     const y1 = y + DY[i];
+  //     if (0 <= x1 && x1 < width && 0 <= y1 && y1 < height) {
+  //       const ret = fn(x1, y1);
+  //       if (typeof ret !== 'undefined') return ret;
+  //     }
+  //   }
+  // }
 }
 
 function perm(n) {
