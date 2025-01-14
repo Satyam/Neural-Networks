@@ -1,4 +1,4 @@
-const SIGMA = Uint16Array.from(
+const SIGMA = Array.from(
   '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"$%&\'()*+,-/:;<=>?@[\\]^_`{|}~'
 );
 const DX = [0, 1, 0, -1];
