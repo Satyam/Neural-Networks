@@ -1,0 +1,29 @@
+{
+  "name": "numberlink",
+  "version": "1.0.0",
+  "description": "Numberlink / Flow Free in JavaScript",
+  "main": "main.mjs",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Satyam/Neural-Networks.git"
+  },
+  "keywords": [
+    "Numberlink",
+    "FlowFree",
+    "Puzzle"
+  ],
+  "author": "Daniel Barreiro <satyam@satyam.com.ar> (Satyam)",
+  "license": "AGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/Satyam/Neural-Networks/issues"
+  },
+  "homepage": "https://github.com/Satyam/Neural-Networks#readme",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.30.1"
+  }
+}

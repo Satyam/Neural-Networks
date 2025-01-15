@@ -1,4 +1,4 @@
-import { generate } from 'gen.mjs';
+import { generate } from './gen.mjs';
 
 const widthInput = document.getElementById('width');
 const heightInput = document.getElementById('height');
