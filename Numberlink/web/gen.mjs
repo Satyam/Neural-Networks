@@ -1,3 +1,5 @@
+import { rand } from './stdlib.mjs';
+
 const SIGMA = Array.from(
   '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"$%&\'()*+,-/:;<=>?@[\\]^_`{|}~'
 );
@@ -62,8 +64,8 @@ export function generate(width, height) {
   function shuffle() {
     const sizeSquared = width * height * width * height;
     for (let i = 0; i < sizeSquared; i++) {
-      const x = intn(width - 1);
-      const y = intn(height - 1);
+      const x = rand.intn(width - 1);
+      const y = rand.intn(height - 1);
       if (
         table[y][x] == table[y][x + 1] &&
         table[y + 1][x] == table[y + 1][x + 1]
@@ -109,7 +111,7 @@ export function generate(width, height) {
   }
 
   function findFlows() {
-    perm(width * height).forEach((p) => {
+    rand.perm(width * height).forEach((p) => {
       let x = p % width;
       let y = Math.floor(p / width);
       if (isFlowHead(x, y)) {
@@ -196,33 +198,18 @@ export function generate(width, height) {
   }
 
   function getNeighbours(x, y, random = false) {
-    return (random ? perm(4) : Array.from({ length: 4 }, (_, i) => i)).reduce(
-      (a, i) => {
-        const x1 = x + DX[i];
-        const y1 = y + DY[i];
-        // Function inside is in-lined below
-        // function inside(x, y, width, height) {
-        //   return 0 <= x && x < width && 0 <= y && y < height;
-        // }
-        return 0 <= x1 && x1 < width && 0 <= y1 && y1 < height
-          ? [...a, [x1, y1]]
-          : a;
-      },
-      []
-    );
+    return (
+      random ? rand.perm(4) : Array.from({ length: 4 }, (_, i) => i)
+    ).reduce((a, i) => {
+      const x1 = x + DX[i];
+      const y1 = y + DY[i];
+      // Function inside is in-lined below
+      // function inside(x, y, width, height) {
+      //   return 0 <= x && x < width && 0 <= y && y < height;
+      // }
+      return 0 <= x1 && x1 < width && 0 <= y1 && y1 < height
+        ? [...a, [x1, y1]]
+        : a;
+    }, []);
   }
-}
-
-function perm(n) {
-  const m = Array.from({ length: n }, (_, i) => i);
-  for (let i = 0; i < n; i++) {
-    const j = intn(i + 1);
-    m[i] = m[j];
-    m[j] = i;
-  }
-  return m;
-}
-
-function intn(max) {
-  return Math.floor(Math.random() * Math.floor(max));
 }
