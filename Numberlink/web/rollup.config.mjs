@@ -1,4 +1,5 @@
 import terser from '@rollup/plugin-terser';
+import resolve from '@rollup/plugin-node-resolve';
 
 export default {
   input: 'main.mjs',
@@ -15,5 +16,5 @@ export default {
     */
    `,
   },
-  plugins: [terser()],
+  plugins: [terser(), resolve()],
 };
