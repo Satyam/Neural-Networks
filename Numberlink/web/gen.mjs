@@ -120,10 +120,8 @@ export function generate(width, height) {
 
   function isFlowHead(x, y) {
     let degree = 0;
-    for (let i = 0; i < 4; i++) {
-      const x1 = x + DX[i];
-      const y1 = y + DY[i];
-      if (inside(x1, y1, width, height) && table[y1][x1] === table[y][x]) {
+    for (const [x1, y1] of getNeighbours(x, y)) {
+      if (table[y1][x1] === table[y][x]) {
         degree += 1;
       }
     }
@@ -131,16 +129,14 @@ export function generate(width, height) {
   }
 
   function layFlow(x, y) {
-    perm(4).forEach((i) => {
-      const x1 = x + DX[i];
-      const y1 = y + DY[i];
-      if (inside(x1, y1, width, height) && canConnect(x, y, x1, y1)) {
+    for (const [x1, y1] of getNeighbours(x, y, true)) {
+      if (canConnect(x, y, x1, y1)) {
         fill(x1, y1, table[y][x]);
         const [x2, y2] = follow(x1, y1, x, y);
         layFlow(x2, y2);
         return;
       }
-    });
+    }
   }
 
   function canConnect(x1, y1, x2, y2) {
@@ -148,11 +144,8 @@ export function generate(width, height) {
     if (!isFlowHead(x1, y1) || !isFlowHead(x2, y2)) return false;
     for (let y3 = 0; y3 < height; y3++) {
       for (let x3 = 0; x3 < width; x3++) {
-        for (let i = 0; i < 4; i++) {
-          const x4 = x3 + DX[i];
-          const y4 = y3 + DY[i];
+        for (const [x4, y4] of getNeighbours(x3, y3)) {
           if (
-            inside(x4, y4, width, height) &&
             !(x3 === x1 && y3 === y1 && x4 === x2 && y4 === y2) &&
             table[y3][x3] === table[y1][x1] &&
             table[y4][x4] === table[y2][x2]
@@ -168,24 +161,16 @@ export function generate(width, height) {
   function fill(x, y, alpha) {
     const orig = table[y][x];
     table[y][x] = alpha;
-    for (let i = 0; i < 4; i++) {
-      const x1 = x + DX[i];
-      const y1 = y + DY[i];
-      if (inside(x1, y1, width, height) && table[y1][x1] === orig) {
+    for (const [x1, y1] of getNeighbours(x, y)) {
+      if (table[y1][x1] === orig) {
         fill(x1, y1, alpha);
       }
     }
   }
 
   function follow(x, y, x0, y0) {
-    for (let i = 0; i < 4; i++) {
-      const x1 = x + DX[i];
-      const y1 = y + DY[i];
-      if (
-        inside(x1, y1, width, height) &&
-        !(x1 === x0 && y1 === y0) &&
-        table[y][x] === table[y1][x1]
-      ) {
+    for (const [x1, y1] of getNeighbours(x, y)) {
+      if (!(x1 === x0 && y1 === y0) && table[y][x] === table[y1][x1]) {
         return follow(x1, y1, x, y);
       }
     }
@@ -210,17 +195,22 @@ export function generate(width, height) {
     return -alpha - 1;
   }
 
-  // Just an idea ...
-  // function forEachNeighbour(x, y, fn) {
-  //   for (let i = 0; i < 4; i++) {
-  //     const x1 = x + DX[i];
-  //     const y1 = y + DY[i];
-  //     if (0 <= x1 && x1 < width && 0 <= y1 && y1 < height) {
-  //       const ret = fn(x1, y1);
-  //       if (typeof ret !== 'undefined') return ret;
-  //     }
-  //   }
-  // }
+  function getNeighbours(x, y, random = false) {
+    return (random ? perm(4) : Array.from({ length: 4 }, (_, i) => i)).reduce(
+      (a, i) => {
+        const x1 = x + DX[i];
+        const y1 = y + DY[i];
+        // Function inside is in-lined below
+        // function inside(x, y, width, height) {
+        //   return 0 <= x && x < width && 0 <= y && y < height;
+        // }
+        return 0 <= x1 && x1 < width && 0 <= y1 && y1 < height
+          ? [...a, [x1, y1]]
+          : a;
+      },
+      []
+    );
+  }
 }
 
 function perm(n) {
@@ -235,8 +225,4 @@ function perm(n) {
 
 function intn(max) {
   return Math.floor(Math.random() * Math.floor(max));
-}
-
-function inside(x, y, width, height) {
-  return 0 <= x && x < width && 0 <= y && y < height;
 }
