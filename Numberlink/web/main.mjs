@@ -1,6 +1,8 @@
 import { parseArgs } from 'node:util';
 import { generate } from './gen.mjs';
 
+const genArgsRx = /^\s*=?\s*(\d+)\s*[x\*]\s*(\d+)\s*$/i;
+
 const options = {
   colors: {
     type: 'boolean',
@@ -21,9 +23,10 @@ const options = {
     short: 'h',
   },
 };
-const { values } = parseArgs({ options });
 
-if (values.help) {
+const { values: args } = parseArgs({ options, strict: false });
+
+if (args.help) {
   console.log(`Usage:
     ./numberlink.js [flags]
   where flags:
@@ -61,4 +64,31 @@ if (values.help) {
     `);
   process.exit(0);
 }
-console.log(values);
+if (args.generate) {
+  if (args.generate === true) {
+    throw new Error('Missing arguments for --generate option');
+  }
+  const m = genArgsRx.exec(args.generate);
+  if (m) {
+    const width = parseInt(m[1], 10);
+    const height = parseInt(m[2], 10);
+    if (isNaN(width) || isNaN(height)) {
+      throw new Error(
+        `Unable to parse arguments to --generate ${args.generate}`
+      );
+    }
+    if (width < 2 || height < 2) {
+      throw new Error(
+        `The width and height arguments must be greater or equal to 2 ${args.generate}`
+      );
+    }
+    const [pzle, _] = generate(width, height);
+    console.log(width, height);
+    for (const line of pzle) {
+      console.log(line);
+    }
+    process.exit(0);
+  } else {
+    throw new Error(`Unable to parse arguments to --generate ${args.generate}`);
+  }
+}
