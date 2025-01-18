@@ -152,4 +152,191 @@ export default class Paper {
       this.table[pos + 1] != EMPTY
     );
   }
+
+  tryConnection(pos1, dirs) {
+    // Extract the (last) bit which we will process in this call
+    const dir = dirs & -dirs;
+    const pos2 = pos1 + this.vctr[dir];
+    const end1 = this.end[pos1];
+    const end2 = this.end[pos2];
+
+    // Cannot connect out of the paper
+    if (this.table[pos2] == GRASS) {
+      return false;
+    }
+    // Check different sources aren't connected
+    if (
+      this.table[end1] != EMPTY &&
+      this.table[end2] != EMPTY &&
+      this.table[end1] != this.table[end2]
+    ) {
+      return false;
+    }
+    // No loops
+    if (end1 == pos2 && end2 == pos1) {
+      return false;
+    }
+    // No tight corners (Just an optimization)
+    if (this.con[pos1] != 0) {
+      const dir2 = this.con[pos1 + this.vctr[this.con[pos1]]];
+      const dir3 = this.con[pos1] | dir;
+      if (DIAG[dir2] && DIAG[dir3] && dir2 & (dir3 != 0)) {
+        return false;
+      }
+    }
+
+    // Add the connection and a backwards connection from pos2
+    const old1 = this.con[pos1];
+    const old2 = this.con[pos2];
+    this.con[pos1] |= dir;
+    this.con[pos2] |= MIR[dir];
+    // Change states of ends to connect pos1 and pos2
+    const old3 = this.end[end1];
+    const old4 = this.end[end2];
+    this.end[end1] = end2;
+    this.end[end2] = end1;
+
+    // Remove the done bit and recurse if nessecary
+    const dir2 = dirs & ~dir;
+    let res = false;
+    if (dir2 == 0) {
+      res = this.chooseConnection(this.next[pos1]);
+    } else {
+      res = this.tryConnection(pos1, dir2);
+    }
+
+    // Recreate the state, but not if a solution was found,
+    // since we'll let it bubble all the way to the caller
+    if (!res) {
+      this.con[pos1] = old1;
+      this.con[pos2] = old2;
+      this.end[end1] = old3;
+      this.end[end2] = old4;
+    }
+
+    return res;
+  }
+
+  // As it turns out, though our algorithm avoids must self-touching flows, it
+  // can be tricked to allow some. Hence we need this validation to filter out
+  // the false positives
+  validate() {
+    const w = this.width;
+    const h = this.height;
+    const vtable = Array(w * h);
+    for (let pos = 0; pos < w * h; pos++) {
+      if (this.source[pos]) {
+        // Run throw the flow
+        const alpha = this.table[pos];
+        let p = pos;
+        let old = pos;
+        let next = pos;
+        for (;;) {
+          // Mark our path as we go
+          vtable[p] = alpha;
+          for (const dir of DIRS) {
+            const cand = p + this.vctr[dir];
+            if (this.con[p] & (dir != 0)) {
+              if (cand != old) {
+                next = cand;
+              }
+            } else if (vtable[cand] == alpha) {
+              // We aren't connected, but it has our color,
+              // this is exactly what we doesn't want.
+              return false;
+            }
+          }
+          // We have reached the end
+          if (old != p && this.source[p]) {
+            break;
+          }
+          old = p;
+          p = next;
+        }
+      }
+    }
+    return true;
+  }
+
+  initTables() {
+    const w = this.width;
+    const h = this.height;
+
+    // Direction vector table
+    for (let dir = 0; dir < 16; dir++) {
+      if (dir & (N != 0)) {
+        this.vctr[dir] += -w;
+      }
+      if (dir & (E != 0)) {
+        this.vctr[dir] += 1;
+      }
+      if (dir & (S != 0)) {
+        this.vctr[dir] += w;
+      }
+      if (dir & (W != 0)) {
+        this.vctr[dir] -= 1;
+      }
+    }
+
+    // Positions of the four corners inside the grass
+    this.crnr[N | W] = w + 1;
+    this.crnr[N | E] = 2 * w - 2;
+    this.crnr[S | E] = h * w - w - 2;
+    this.crnr[S | W] = h * w - 2 * w + 1;
+
+    // Table to easily check if a position is a source
+    this.source = Array(w * h);
+    for (let pos = 0; pos < w * h; pos++) {
+      this.source[pos] = this.table[pos] != EMPTY && this.table[pos] != GRASS;
+    }
+
+    // Pivot tables
+    this.canSE = Array(w * h);
+    this.canSW = Array(w * h);
+    for (const pos of this.table) {
+      if (this.source[pos]) {
+        const d = this.vctr[N | W];
+        for (let p = pos + d; this.table[p] == EMPTY; p += d) {
+          this.canSE[p] = true;
+        }
+        d = this.vctr[N | E];
+        for (let p = pos + d; this.table[p] == EMPTY; p += d) {
+          this.canSW[p] = true;
+        }
+      }
+    }
+
+    // Diagonal 'next' table
+    this.next = Array(w * h);
+    let last = 0;
+    for (const pos of [
+      ...xrange(this.crnr[N | W], this.crnr[N | E], 1),
+      ...xrange(this.crnr[N | E], this.crnr[S | E] + 1, w),
+    ]) {
+      while (this.table[pos] != GRASS) {
+        this.next[last] = pos;
+        last = pos;
+        pos = pos + w - 1;
+      }
+    }
+
+    // 'Where is the other end' table
+    this.end = Array(w * h);
+    for (let pos = 0; pos < w * h; pos++) {
+      this.end[pos] = pos;
+    }
+
+    // Connection table
+    this.con = Array(w * h);
+  }
+
+  // Makes a slice of the interval [i, i+step, i+2step, ..., j)
+  xrange(i, j, step) {
+    const slice = [];
+    while (i < j) {
+      slice.push(i);
+      i += step;
+    }
+    return slice;
+  }
 }
