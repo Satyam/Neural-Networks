@@ -1,5 +1,5 @@
 const GRASS = '#';
-const EMPTY = '.';
+export const EMPTY = '.';
 
 const N = 1;
 const E = 2;
@@ -7,7 +7,7 @@ const S = 4;
 const W = 8;
 
 // Array for iterating over simple directions
-const DIRS = [N, E, S, W];
+export const DIRS = [N, E, S, W];
 // Mirrors simple directions
 const MIR = { N: S, E: W, S: N, W: E };
 // Filter for N|E, N|W, S|E and S|W

@@ -1,5 +1,9 @@
 import { parseArgs } from 'node:util';
 import { generate } from './gen.mjs';
+import { createInterface } from 'node:readline';
+import { stdin, stdout } from 'node:process';
+import parse from './parse.mjs';
+import { printSimple, printTubes } from './print.mjs';
 
 const genArgsRx = /^\s*=?\s*(\d+)\s*[x\*]\s*(\d+)\s*$/i;
 
@@ -21,6 +25,9 @@ const options = {
   help: {
     type: 'boolean',
     short: 'h',
+  },
+  calls: {
+    type: 'boolean',
   },
 };
 
@@ -68,6 +75,7 @@ if (args.generate) {
   if (args.generate === true) {
     throw new Error('Missing arguments for --generate option');
   }
+
   const m = genArgsRx.exec(args.generate);
   if (m) {
     const width = parseInt(m[1], 10);
@@ -92,3 +100,54 @@ if (args.generate) {
     throw new Error(`Unable to parse arguments to --generate ${args.generate}`);
   }
 }
+
+// Profiling is missing ...
+
+const reader = createInterface({
+  input: stdin,
+  output: stdout,
+});
+
+let w = 0;
+let h = 0;
+const lines = [];
+reader
+  .on('line', (rawLine) => {
+    const line = rawLine.trim();
+    if (line.length === 0 || line.startsWith('#')) return;
+    if (h === 0) {
+      const parts = line.split(/\s+/);
+      const w = parseInt(parts[0], 10);
+      const h = parseInt(parts[1], 10);
+
+      if (parts.length !== 2 || isNaN(w) || isNaN(h)) {
+        throw new Error(`Expected 'width height' got ${rawLine}`);
+      }
+
+      if (w === 0 && h === 0) {
+        process.exit(0);
+      }
+      lines.length = 0;
+    } else {
+      lines.push(line);
+      if (lines.length === h) {
+        const paper = parse(w, h, lines);
+        const res = paper.solve();
+        if (res) {
+          if (args.tubes) {
+            printTubes(paper, args.color);
+          } else {
+            printSimple(paper, args.color);
+          }
+        } else {
+          console.log('IMPOSSIBLE');
+        }
+        if (args.calls) {
+          console.log(`Called ${paper._calls} times`);
+        }
+      }
+    }
+  })
+  .on('close', () => {
+    process.exit(0);
+  });
