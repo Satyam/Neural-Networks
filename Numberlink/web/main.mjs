@@ -117,8 +117,8 @@ reader
     if (line.length === 0 || line.startsWith('#')) return;
     if (h === 0) {
       const parts = line.split(/\s+/);
-      const w = parseInt(parts[0], 10);
-      const h = parseInt(parts[1], 10);
+      w = parseInt(parts[0], 10);
+      h = parseInt(parts[1], 10);
 
       if (parts.length !== 2 || isNaN(w) || isNaN(h)) {
         throw new Error(`Expected 'width height' got ${rawLine}`);
@@ -143,7 +143,7 @@ reader
           console.log('IMPOSSIBLE');
         }
         if (args.calls) {
-          console.log(`Called ${paper._calls} times`);
+          console.log(`Called ${paper.calls} times`);
         }
       }
     }

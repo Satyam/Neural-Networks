@@ -24,13 +24,19 @@ export default class Paper {
     this.crnr = [];
 
     const endBorder = Array.from({ length: w }, () => GRASS);
-    this.table = endBorder;
+    this.table = endBorder.concat();
+    // We are usung the original width and height here,
+    // without extra GRASS,
+    // because that is the size of the original`table`
     for (let y = 0; y < height; y++) {
-      this.table.concat([GRASS], table.slice(y * width, (y + 1) * width), [
+      this.table = this.table.concat(
         GRASS,
-      ]);
+        table.slice(y * width, (y + 1) * width),
+        GRASS
+      );
     }
-    this.table.concat(endBorder);
+    this.table = this.table.concat(endBorder);
+
     this.con = [];
     this.source = [];
     this.end = [];
@@ -39,12 +45,13 @@ export default class Paper {
     this.next = [];
     this.initTables();
   }
+
   solve() {
-    this._calls = 0;
-    return this.chooseConnection(pos);
+    this.calls = 0;
+    return this.chooseConnection(this.crnr[N | W]);
   }
   chooseConnection(pos) {
-    this._calls++;
+    this.calls++;
 
     // Final
     if (pos === 0) return this.validate();
@@ -55,7 +62,7 @@ export default class Paper {
         // If the source is not yet connection
         case 0:
           // We can't connect E if we have a NE corner
-          if ((this.con[pos - w + 1] != S) | W) {
+          if (this.con[pos - w + 1] !== (S | W)) {
             if (this.tryConnection(pos, E)) {
               return true;
             }
@@ -68,7 +75,8 @@ export default class Paper {
           }
           break;
         // If the source is already connected
-        case (N, W):
+        case N:
+        case W:
           return this.chooseConnection(this.next[pos]);
       }
     } else {
@@ -94,17 +102,18 @@ export default class Paper {
           }
           // Ensure we don't block of any diagonals (NE and NW don't seem very important)
           if (
-            (this.con[pos - w + 1] != S) | W &&
-            (this.con[pos - w - 1] != S) | E
+            this.con[pos - w + 1] !== (S | W) &&
+            this.con[pos - w - 1] !== (S | E)
           ) {
             return this.tryConnection(pos, E);
           }
           break;
         // NW
-        case N | W:
+        case N:
+        case W:
           // Check if the 'by others implied' turn is actually allowed
           // We don't need to check the source connection here like in N|E
-          if (this.con[pos - w - 1] == (N | W) || this.source[pos - w - 1]) {
+          if (this.con[pos - w - 1] === (N | W) || this.source[pos - w - 1]) {
             return this.chooseConnection(this.next[pos]);
           }
           break;
@@ -112,8 +121,9 @@ export default class Paper {
         case N:
           // Check that we are either extending a corner or starting at a non-occupied source
           if (
-            (this.con[pos - w + 1] == N) | E ||
-            (this.source[pos - w + 1] && this.con[pos - w + 1] & ((N | E) != 0))
+            this.con[pos - w + 1] === (N | E) ||
+            (this.source[pos - w + 1] &&
+              this.con[pos - w + 1] & ((N | E) !== 0))
           ) {
             if (this.tryConnection(pos, E)) {
               return true;
@@ -121,8 +131,8 @@ export default class Paper {
           }
           // Ensure we don't block of any diagonals
           if (
-            (this.con[pos - w + 1] != S) | W &&
-            (this.con[pos - w - 1] != S) | E &&
+            this.con[pos - w + 1] !== (S | W) &&
+            this.con[pos - w - 1] !== (S | E) &&
             this.checkImplicitSE(pos)
           ) {
             return this.tryConnection(pos, S);
@@ -136,7 +146,7 @@ export default class Paper {
   checkSWLane(pos) {
     for (; !this.source[pos]; pos += this.width - 1) {
       // Con = 0 means we are crossing a SE line, N|W means a NW
-      if (this.con[pos] != W) {
+      if (this.con[pos] !== W) {
         return false;
       }
     }
@@ -147,9 +157,9 @@ export default class Paper {
   //                 │   <-- Forced SE corner
   checkImplicitSE(pos) {
     return (
-      !(this.con[pos + 1] == 0) ||
+      !(this.con[pos + 1] === 0) ||
       this.canSE[pos + 1] ||
-      this.table[pos + 1] != EMPTY
+      this.table[pos + 1] !== EMPTY
     );
   }
 
@@ -161,26 +171,26 @@ export default class Paper {
     const end2 = this.end[pos2];
 
     // Cannot connect out of the paper
-    if (this.table[pos2] == GRASS) {
+    if (this.table[pos2] === GRASS) {
       return false;
     }
     // Check different sources aren't connected
     if (
-      this.table[end1] != EMPTY &&
-      this.table[end2] != EMPTY &&
-      this.table[end1] != this.table[end2]
+      this.table[end1] !== EMPTY &&
+      this.table[end2] !== EMPTY &&
+      this.table[end1] !== this.table[end2]
     ) {
       return false;
     }
     // No loops
-    if (end1 == pos2 && end2 == pos1) {
+    if (end1 === pos2 && end2 === pos1) {
       return false;
     }
     // No tight corners (Just an optimization)
-    if (this.con[pos1] != 0) {
+    if (this.con[pos1] !== 0) {
       const dir2 = this.con[pos1 + this.vctr[this.con[pos1]]];
       const dir3 = this.con[pos1] | dir;
-      if (DIAG[dir2] && DIAG[dir3] && dir2 & (dir3 != 0)) {
+      if (DIAG[dir2] && DIAG[dir3] && dir2 && dir3 !== 0) {
         return false;
       }
     }
@@ -199,7 +209,7 @@ export default class Paper {
     // Remove the done bit and recurse if nessecary
     const dir2 = dirs & ~dir;
     let res = false;
-    if (dir2 == 0) {
+    if (dir2 === 0) {
       res = this.chooseConnection(this.next[pos1]);
     } else {
       res = this.tryConnection(pos1, dir2);
@@ -236,18 +246,18 @@ export default class Paper {
           vtable[p] = alpha;
           for (const dir of DIRS) {
             const cand = p + this.vctr[dir];
-            if (this.con[p] & (dir != 0)) {
-              if (cand != old) {
+            if ((this.con[p] & dir) !== 0) {
+              if (cand !== old) {
                 next = cand;
               }
-            } else if (vtable[cand] == alpha) {
+            } else if (vtable[cand] === alpha) {
               // We aren't connected, but it has our color,
               // this is exactly what we doesn't want.
               return false;
             }
           }
           // We have reached the end
-          if (old != p && this.source[p]) {
+          if (old !== p && this.source[p]) {
             break;
           }
           old = p;
@@ -264,16 +274,16 @@ export default class Paper {
 
     // Direction vector table
     for (let dir = 0; dir < 16; dir++) {
-      if (dir & (N != 0)) {
+      if ((dir & N) !== 0) {
         this.vctr[dir] += -w;
       }
-      if (dir & (E != 0)) {
+      if ((dir & E) !== 0) {
         this.vctr[dir] += 1;
       }
-      if (dir & (S != 0)) {
+      if ((dir & S) !== 0) {
         this.vctr[dir] += w;
       }
-      if (dir & (W != 0)) {
+      if ((dir & W) !== 0) {
         this.vctr[dir] -= 1;
       }
     }
@@ -287,20 +297,20 @@ export default class Paper {
     // Table to easily check if a position is a source
     this.source = Array(w * h);
     for (let pos = 0; pos < w * h; pos++) {
-      this.source[pos] = this.table[pos] != EMPTY && this.table[pos] != GRASS;
+      this.source[pos] = this.table[pos] !== EMPTY && this.table[pos] !== GRASS;
     }
 
     // Pivot tables
     this.canSE = Array(w * h);
     this.canSW = Array(w * h);
-    for (const pos of this.table) {
+    for (const pos in this.table) {
       if (this.source[pos]) {
-        const d = this.vctr[N | W];
-        for (let p = pos + d; this.table[p] == EMPTY; p += d) {
+        let d = this.vctr[N | W];
+        for (let p = pos + d; this.table[p] === EMPTY; p += d) {
           this.canSE[p] = true;
         }
         d = this.vctr[N | E];
-        for (let p = pos + d; this.table[p] == EMPTY; p += d) {
+        for (let p = pos + d; this.table[p] === EMPTY; p += d) {
           this.canSW[p] = true;
         }
       }
@@ -309,11 +319,11 @@ export default class Paper {
     // Diagonal 'next' table
     this.next = Array(w * h);
     let last = 0;
-    for (const pos of [
-      ...xrange(this.crnr[N | W], this.crnr[N | E], 1),
-      ...xrange(this.crnr[N | E], this.crnr[S | E] + 1, w),
+    for (let pos of [
+      ...this.xrange(this.crnr[N | W], this.crnr[N | E], 1),
+      ...this.xrange(this.crnr[N | E], this.crnr[S | E] + 1, w),
     ]) {
-      while (this.table[pos] != GRASS) {
+      while (this.table[pos] !== GRASS) {
         this.next[last] = pos;
         last = pos;
         pos = pos + w - 1;
