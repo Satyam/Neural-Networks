@@ -10,14 +10,13 @@ export default function parse(width, height, lines) {
     );
   }
 
-  const table = [];
-  for (const line of lines) {
-    for (c of line) {
-      table.push(c);
-    }
-  }
-  const table1 = lines.join('').split('');
+  // const table = [];
+  // for (const line of lines) {
+  //   for (const c of line) {
+  //     table.push(c);
+  //   }
+  // }
+  const table = lines.join('').split('');
 
-  console.log('Parse lines into table', table == table1);
   return new Paper(width, height, table);
 }
