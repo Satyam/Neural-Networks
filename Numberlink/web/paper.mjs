@@ -9,7 +9,7 @@ const W = 8;
 // Array for iterating over simple directions
 export const DIRS = [N, E, S, W];
 // Mirrors simple directions
-const MIR = { N: S, E: W, S: N, W: E };
+const MIR = { [N]: S, [E]: W, [S]: N, [W]: E };
 // Filter for N|E, N|W, S|E and S|W
 const DIAG = { [N | E]: true, [N | W]: true, [S | E]: true, [S | W]: true };
 
@@ -20,10 +20,10 @@ export default class Paper {
     const h = height + 2;
     this.width = w;
     this.height = h;
-    this.vctr = [];
-    this.crnr = [];
+    this.vctr = Array(16).fill(0);
+    this.crnr = Array(16).fill(0);
 
-    const endBorder = Array.from({ length: w }, () => GRASS);
+    const endBorder = Array(w).fill(GRASS);
     this.table = endBorder.concat();
     // We are usung the original width and height here,
     // without extra GRASS,
@@ -271,6 +271,7 @@ export default class Paper {
   initTables() {
     const w = this.width;
     const h = this.height;
+    const size = w * h;
 
     // Direction vector table
     for (let dir = 0; dir < 16; dir++) {
@@ -291,19 +292,19 @@ export default class Paper {
     // Positions of the four corners inside the grass
     this.crnr[N | W] = w + 1;
     this.crnr[N | E] = 2 * w - 2;
-    this.crnr[S | E] = h * w - w - 2;
-    this.crnr[S | W] = h * w - 2 * w + 1;
+    this.crnr[S | E] = size - w - 2;
+    this.crnr[S | W] = size - 2 * w + 1;
 
     // Table to easily check if a position is a source
-    this.source = Array(w * h);
-    for (let pos = 0; pos < w * h; pos++) {
-      this.source[pos] = this.table[pos] !== EMPTY && this.table[pos] !== GRASS;
-    }
+    this.source = Array.from(
+      { length: size },
+      (_, pos) => this.table[pos] !== EMPTY && this.table[pos] !== GRASS
+    );
 
     // Pivot tables
-    this.canSE = Array(w * h);
-    this.canSW = Array(w * h);
-    for (const pos in this.table) {
+    this.canSE = Array(size).fill(false);
+    this.canSW = Array(size).fill(false);
+    for (let pos = 0; pos < size; pos++) {
       if (this.source[pos]) {
         let d = this.vctr[N | W];
         for (let p = pos + d; this.table[p] === EMPTY; p += d) {
@@ -317,7 +318,7 @@ export default class Paper {
     }
 
     // Diagonal 'next' table
-    this.next = Array(w * h);
+    this.next = Array(size).fill(0);
     let last = 0;
     for (let pos of [
       ...this.xrange(this.crnr[N | W], this.crnr[N | E], 1),
@@ -331,13 +332,10 @@ export default class Paper {
     }
 
     // 'Where is the other end' table
-    this.end = Array(w * h);
-    for (let pos = 0; pos < w * h; pos++) {
-      this.end[pos] = pos;
-    }
+    this.end = Array.from({ length: size }, (_, pos) => pos);
 
     // Connection table
-    this.con = Array(w * h);
+    this.con = Array(w * h).fill(0);
   }
 
   // Makes a slice of the interval [i, i+step, i+2step, ..., j)
