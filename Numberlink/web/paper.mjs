@@ -1,3 +1,5 @@
+import util from 'node:util';
+
 const GRASS = '#';
 export const EMPTY = '.';
 
@@ -52,7 +54,11 @@ export default class Paper {
   }
   chooseConnection(pos) {
     this.calls++;
-
+    console.log('chooseConnection', pos);
+    for (const callSite of util.getCallSites()) {
+      if (callSite.functionName === 'solve') break;
+      console.log('---', callSite.functionName);
+    }
     // Final
     if (pos === 0) return this.validate();
 
@@ -123,7 +129,7 @@ export default class Paper {
           if (
             this.con[pos - w + 1] === (N | E) ||
             (this.source[pos - w + 1] &&
-              this.con[pos - w + 1] & ((N | E) !== 0))
+              (this.con[pos - w + 1] & (N | E)) !== 0)
           ) {
             if (this.tryConnection(pos, E)) {
               return true;
@@ -140,6 +146,7 @@ export default class Paper {
           break;
       }
     }
+    console.log('chooseConnection returns false');
     return false;
   }
   // Check that a SW line of corners, starting at pos, will not intersect a SE or NW line
@@ -163,74 +170,103 @@ export default class Paper {
     );
   }
 
-  tryConnection(pos1, dirs) {
+  tryConnection(srcPos, dirs) {
     // Extract the (last) bit which we will process in this call
+    console.log('tryConnection', srcPos, dirs, dirs & -dirs);
+    for (const callSite of util.getCallSites()) {
+      if (callSite.functionName === 'solve') break;
+      console.log('---', callSite.functionName);
+    }
+    this._conend('inicio');
     const dir = dirs & -dirs;
-    const pos2 = pos1 + this.vctr[dir];
-    const end1 = this.end[pos1];
-    const end2 = this.end[pos2];
+
+    const nextPos = srcPos + this.vctr[dir];
+    const srcEnd = this.end[srcPos];
+    const nextEnd = this.end[nextPos];
 
     // Cannot connect out of the paper
-    if (this.table[pos2] === GRASS) {
+    if (this.table[nextPos] === GRASS) {
       return false;
     }
     // Check different sources aren't connected
     if (
-      this.table[end1] !== EMPTY &&
-      this.table[end2] !== EMPTY &&
-      this.table[end1] !== this.table[end2]
+      this.table[srcEnd] !== EMPTY &&
+      this.table[nextEnd] !== EMPTY &&
+      this.table[srcEnd] !== this.table[nextEnd]
     ) {
       return false;
     }
     // No loops
-    if (end1 === pos2 && end2 === pos1) {
+    if (srcEnd === nextPos && nextEnd === srcPos) {
       return false;
     }
     // No tight corners (Just an optimization)
-    if (this.con[pos1] !== 0) {
-      const dir2 = this.con[pos1 + this.vctr[this.con[pos1]]];
-      const dir3 = this.con[pos1] | dir;
-      if (DIAG[dir2] && DIAG[dir3] && dir2 && dir3 !== 0) {
+    if (this.con[srcPos] !== 0) {
+      const dir2 = this.con[srcPos + this.vctr[this.con[srcPos]]];
+      const dir3 = this.con[srcPos] | dir;
+      if (DIAG[dir2] && DIAG[dir3] && (dir2 & dir3) !== 0) {
         return false;
       }
     }
 
-    // Add the connection and a backwards connection from pos2
-    const old1 = this.con[pos1];
-    const old2 = this.con[pos2];
-    this.con[pos1] |= dir;
-    this.con[pos2] |= MIR[dir];
-    // Change states of ends to connect pos1 and pos2
-    const old3 = this.end[end1];
-    const old4 = this.end[end2];
-    this.end[end1] = end2;
-    this.end[end2] = end1;
+    // Add the connection and a backwards connection from nextPos
+    const oldSrcCon = this.con[srcPos];
+    const oldNextCon = this.con[nextPos];
+    this.con[srcPos] |= dir;
+    this.con[nextPos] |= MIR[dir];
+    // Change states of ends to connect srcPos and nextPos
+    const oldSrcEnd = this.end[srcEnd];
+    const oldNextEnd = this.end[nextEnd];
+    this.end[srcEnd] = nextEnd;
+    this.end[nextEnd] = srcEnd;
 
+    this._conend('before recurse');
     // Remove the done bit and recurse if nessecary
     const dir2 = dirs & ~dir;
     let res = false;
     if (dir2 === 0) {
-      res = this.chooseConnection(this.next[pos1]);
+      res = this.chooseConnection(this.next[srcPos]);
     } else {
-      res = this.tryConnection(pos1, dir2);
+      res = this.tryConnection(srcPos, dir2);
     }
 
     // Recreate the state, but not if a solution was found,
     // since we'll let it bubble all the way to the caller
     if (!res) {
-      this.con[pos1] = old1;
-      this.con[pos2] = old2;
-      this.end[end1] = old3;
-      this.end[end2] = old4;
+      this.con[srcPos] = oldSrcCon;
+      this.con[nextPos] = oldNextCon;
+      this.end[srcEnd] = oldSrcEnd;
+      this.end[nextEnd] = oldNextEnd;
     }
-
+    this._conend(`tryConnection(${srcPos},${dirs}) returns with ${res}`);
     return res;
   }
 
+  _conend(msg) {
+    console.log(msg);
+    const fmt = (what, start, end) =>
+      what
+        .slice(start, end)
+        .map((v) => String(v).padStart(2, ' '))
+        .join(' ');
+    for (let y = 1; y < this.height - 1; y++) {
+      const start = y * this.width + 1;
+      const end = start + this.width - 2;
+      console.log(
+        'c:',
+        fmt(this.con, start, end),
+        '  e:',
+        fmt(this.end, start, end),
+        '  t:',
+        this.table.slice(start, end).join('')
+      );
+    }
+  }
   // As it turns out, though our algorithm avoids must self-touching flows, it
   // can be tricked to allow some. Hence we need this validation to filter out
   // the false positives
   validate() {
+    console.log('validate');
     const w = this.width;
     const h = this.height;
     const vtable = Array(w * h);
