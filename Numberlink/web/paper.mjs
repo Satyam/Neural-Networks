@@ -64,12 +64,14 @@ export default class Paper {
     if (pos === 0) return this.validate();
 
     const w = this.width;
+    const posNE = pos + this.vctr[NE];
+    const posNW = pos + this.vctr[NW];
     if (this.source[pos]) {
       switch (this.con[pos]) {
         // If the source is not yet connection
         case 0:
           // We can't connect E if we have a NE corner
-          if (this.con[pos - w + 1] !== SW) {
+          if (this.con[posNE] !== SW) {
             if (this.tryConnection(pos, E)) {
               return true;
             }
@@ -108,7 +110,7 @@ export default class Paper {
             }
           }
           // Ensure we don't block of any diagonals (NE and NW don't seem very important)
-          if (this.con[pos - w + 1] !== SW && this.con[pos - w - 1] !== SE) {
+          if (this.con[posNE] !== SW && this.con[posNW] !== SE) {
             return this.tryConnection(pos, E);
           }
           break;
@@ -117,7 +119,7 @@ export default class Paper {
         case W:
           // Check if the 'by others implied' turn is actually allowed
           // We don't need to check the source connection here like in N|E
-          if (this.con[pos - w - 1] === NW || this.source[pos - w - 1]) {
+          if (this.con[posNW] === NW || this.source[posNW]) {
             return this.chooseConnection(this.next[pos]);
           }
           break;
@@ -125,8 +127,8 @@ export default class Paper {
         case N:
           // Check that we are either extending a corner or starting at a non-occupied source
           if (
-            this.con[pos - w + 1] === NE ||
-            (this.source[pos - w + 1] && (this.con[pos - w + 1] & NE) !== 0)
+            this.con[posNE] === NE ||
+            (this.source[posNE] && (this.con[posNE] & NE) !== 0)
           ) {
             if (this.tryConnection(pos, E)) {
               return true;
@@ -134,8 +136,8 @@ export default class Paper {
           }
           // Ensure we don't block of any diagonals
           if (
-            this.con[pos - w + 1] !== SW &&
-            this.con[pos - w - 1] !== SE &&
+            this.con[posNE] !== SW &&
+            this.con[posNW] !== SE &&
             this.checkImplicitSE(pos)
           ) {
             return this.tryConnection(pos, S);
