@@ -26,8 +26,9 @@ export default class Paper {
     const h = height + 2;
     this.width = w;
     this.height = h;
-    this.vctr = Array(16).fill(0);
-    this.crnr = Array(16).fill(0);
+
+    this.vctr = new Int16Array(16).fill(0);
+    this.crnr = new Uint16Array(16).fill(0);
 
     const endBorder = Array(w).fill(GRASS);
     this.table = endBorder.concat();
@@ -43,12 +44,18 @@ export default class Paper {
     }
     this.table = this.table.concat(endBorder);
 
-    this.con = [];
-    this.source = [];
-    this.end = [];
-    this.canSE = [];
-    this.canSW = [];
-    this.next = [];
+    // This will all be initialized in initTable
+    // so they are not needed here
+    // All boleans are Uint8Arrays,
+    // All cell references are Uint16Arrays
+    // which allow for sizes up to 256*256
+
+    // this.con = new Uint16Array(w * h);
+    // this.source = new Uint8Array(w * h);
+    // this.end = new Uint16Array(w * h);
+    // this.canSE = new Uint8Array(w * h);
+    // this.canSW = new Uint8Array(w * h);
+    // this.next = new Uint16Array(w * h);
     this.initTables();
   }
 
@@ -249,7 +256,7 @@ export default class Paper {
   _conend(msg) {
     console.log(msg);
     const fmtPos = (what, start, end) =>
-      what
+      Array.from(what)
         .slice(start, end)
         .map((v) => String(v).padStart(2, ' '))
         .join(' ');
@@ -265,7 +272,7 @@ export default class Paper {
         '  t:',
         this.table.slice(start, end).join(''),
         '  s:',
-        this.source
+        Array.from(this.source)
           .slice(start, end)
           .map((v) => (v ? 'X' : '.'))
           .join('')
@@ -342,14 +349,14 @@ export default class Paper {
     this.crnr[SW] = size - 2 * w + 1;
 
     // Table to easily check if a position is a source
-    this.source = Array.from(
+    this.source = Uint8Array.from(
       { length: size },
       (_, pos) => this.table[pos] !== EMPTY && this.table[pos] !== GRASS
     );
 
     // Pivot tables
-    this.canSE = Array(size).fill(false);
-    this.canSW = Array(size).fill(false);
+    this.canSE = new Uint8Array(size).fill(false);
+    this.canSW = new Uint8Array(size).fill(false);
     for (let pos = 0; pos < size; pos++) {
       if (this.source[pos]) {
         let d = this.vctr[NW];
@@ -364,7 +371,7 @@ export default class Paper {
     }
 
     // Diagonal 'next' table
-    this.next = Array(size).fill(0);
+    this.next = new Uint16Array(size).fill(0);
     let last = 0;
     for (let pos of [
       ...this.xrange(this.crnr[NW], this.crnr[NE], 1),
@@ -378,10 +385,10 @@ export default class Paper {
     }
 
     // 'Where is the other end' table
-    this.end = Array.from({ length: size }, (_, pos) => pos);
+    this.end = Uint16Array.from({ length: size }, (_, pos) => pos);
 
     // Connection table
-    this.con = Array(w * h).fill(0);
+    this.con = new Uint16Array(w * h).fill(0);
   }
 
   // Makes a slice of the interval [i, i+step, i+2step, ..., j)
