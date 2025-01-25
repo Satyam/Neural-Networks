@@ -7,13 +7,17 @@ const N = 1;
 const E = 2;
 const S = 4;
 const W = 8;
+const NE = N | E;
+const NW = N | W;
+const SE = S | E;
+const SW = S | W;
 
 // Array for iterating over simple directions
 export const DIRS = [N, E, S, W];
 // Mirrors simple directions
 const MIR = { [N]: S, [E]: W, [S]: N, [W]: E };
 // Filter for N|E, N|W, S|E and S|W
-const DIAG = { [N | E]: true, [N | W]: true, [S | E]: true, [S | W]: true };
+const DIAG = { [NE]: true, [NW]: true, [SE]: true, [SW]: true };
 
 export default class Paper {
   constructor(width, height, table) {
@@ -27,7 +31,7 @@ export default class Paper {
 
     const endBorder = Array(w).fill(GRASS);
     this.table = endBorder.concat();
-    // We are usung the original width and height here,
+    // We are using the original width and height here,
     // without extra GRASS,
     // because that is the size of the original`table`
     for (let y = 0; y < height; y++) {
@@ -50,7 +54,7 @@ export default class Paper {
 
   solve() {
     this.calls = 0;
-    return this.chooseConnection(this.crnr[N | W]);
+    return this.chooseConnection(this.crnr[NW]);
   }
   chooseConnection(pos) {
     this.calls++;
@@ -65,7 +69,7 @@ export default class Paper {
         // If the source is not yet connection
         case 0:
           // We can't connect E if we have a NE corner
-          if (this.con[pos - w + 1] !== (S | W)) {
+          if (this.con[pos - w + 1] !== SW) {
             if (this.tryConnection(pos, E)) {
               return true;
             }
@@ -104,10 +108,7 @@ export default class Paper {
             }
           }
           // Ensure we don't block of any diagonals (NE and NW don't seem very important)
-          if (
-            this.con[pos - w + 1] !== (S | W) &&
-            this.con[pos - w - 1] !== (S | E)
-          ) {
+          if (this.con[pos - w + 1] !== SW && this.con[pos - w - 1] !== SE) {
             return this.tryConnection(pos, E);
           }
           break;
@@ -116,7 +117,7 @@ export default class Paper {
         case W:
           // Check if the 'by others implied' turn is actually allowed
           // We don't need to check the source connection here like in N|E
-          if (this.con[pos - w - 1] === (N | W) || this.source[pos - w - 1]) {
+          if (this.con[pos - w - 1] === NW || this.source[pos - w - 1]) {
             return this.chooseConnection(this.next[pos]);
           }
           break;
@@ -124,9 +125,8 @@ export default class Paper {
         case N:
           // Check that we are either extending a corner or starting at a non-occupied source
           if (
-            this.con[pos - w + 1] === (N | E) ||
-            (this.source[pos - w + 1] &&
-              (this.con[pos - w + 1] & (N | E)) !== 0)
+            this.con[pos - w + 1] === NE ||
+            (this.source[pos - w + 1] && (this.con[pos - w + 1] & NE) !== 0)
           ) {
             if (this.tryConnection(pos, E)) {
               return true;
@@ -134,8 +134,8 @@ export default class Paper {
           }
           // Ensure we don't block of any diagonals
           if (
-            this.con[pos - w + 1] !== (S | W) &&
-            this.con[pos - w - 1] !== (S | E) &&
+            this.con[pos - w + 1] !== SW &&
+            this.con[pos - w - 1] !== SE &&
             this.checkImplicitSE(pos)
           ) {
             return this.tryConnection(pos, S);
@@ -334,10 +334,10 @@ export default class Paper {
     }
 
     // Positions of the four corners inside the grass
-    this.crnr[N | W] = w + 1;
-    this.crnr[N | E] = 2 * w - 2;
-    this.crnr[S | E] = size - w - 2;
-    this.crnr[S | W] = size - 2 * w + 1;
+    this.crnr[NW] = w + 1;
+    this.crnr[NE] = 2 * w - 2;
+    this.crnr[SE] = size - w - 2;
+    this.crnr[SW] = size - 2 * w + 1;
 
     // Table to easily check if a position is a source
     this.source = Array.from(
@@ -350,11 +350,11 @@ export default class Paper {
     this.canSW = Array(size).fill(false);
     for (let pos = 0; pos < size; pos++) {
       if (this.source[pos]) {
-        let d = this.vctr[N | W];
+        let d = this.vctr[NW];
         for (let p = pos + d; this.table[p] === EMPTY; p += d) {
           this.canSE[p] = true;
         }
-        d = this.vctr[N | E];
+        d = this.vctr[NE];
         for (let p = pos + d; this.table[p] === EMPTY; p += d) {
           this.canSW[p] = true;
         }
@@ -365,8 +365,8 @@ export default class Paper {
     this.next = Array(size).fill(0);
     let last = 0;
     for (let pos of [
-      ...this.xrange(this.crnr[N | W], this.crnr[N | E], 1),
-      ...this.xrange(this.crnr[N | E], this.crnr[S | E] + 1, w),
+      ...this.xrange(this.crnr[NW], this.crnr[NE], 1),
+      ...this.xrange(this.crnr[NE], this.crnr[SE] + 1, w),
     ]) {
       while (this.table[pos] !== GRASS) {
         this.next[last] = pos;
