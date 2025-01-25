@@ -54,11 +54,8 @@ export default class Paper {
   }
   chooseConnection(pos) {
     this.calls++;
-    console.log('chooseConnection', pos);
-    for (const callSite of util.getCallSites()) {
-      if (callSite.functionName === 'solve') break;
-      console.log('---', callSite.functionName);
-    }
+    this._trace(`chooseConnection: ${pos}`);
+
     // Final
     if (pos === 0) return this.validate();
 
@@ -146,7 +143,7 @@ export default class Paper {
           break;
       }
     }
-    console.log('chooseConnection returns false');
+    console.log(`chooseConnection(${pos}) returns false`);
     return false;
   }
   // Check that a SW line of corners, starting at pos, will not intersect a SE or NW line
@@ -172,11 +169,9 @@ export default class Paper {
 
   tryConnection(srcPos, dirs) {
     // Extract the (last) bit which we will process in this call
-    console.log('tryConnection', srcPos, dirs, dirs & -dirs);
-    for (const callSite of util.getCallSites()) {
-      if (callSite.functionName === 'solve') break;
-      console.log('---', callSite.functionName);
-    }
+    this._trace(
+      `tryConnection srcPos:${srcPos}, dirs:${dirs}, dir:${dirs & -dirs}`
+    );
     this._conend('inicio');
     const dir = dirs & -dirs;
 
@@ -242,9 +237,16 @@ export default class Paper {
     return res;
   }
 
+  _trace(msg) {
+    console.log(msg);
+    for (const callSite of util.getCallSites()) {
+      if (callSite.functionName === 'solve') break;
+      console.log('---', callSite.functionName);
+    }
+  }
   _conend(msg) {
     console.log(msg);
-    const fmt = (what, start, end) =>
+    const fmtPos = (what, start, end) =>
       what
         .slice(start, end)
         .map((v) => String(v).padStart(2, ' '))
@@ -253,12 +255,18 @@ export default class Paper {
       const start = y * this.width + 1;
       const end = start + this.width - 2;
       console.log(
+        String(start).padStart(2, ' '),
         'c:',
-        fmt(this.con, start, end),
+        fmtPos(this.con, start, end),
         '  e:',
-        fmt(this.end, start, end),
+        fmtPos(this.end, start, end),
         '  t:',
-        this.table.slice(start, end).join('')
+        this.table.slice(start, end).join(''),
+        '  s:',
+        this.source
+          .slice(start, end)
+          .map((v) => (v ? 'X' : '.'))
+          .join('')
       );
     }
   }
