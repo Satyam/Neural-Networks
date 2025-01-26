@@ -135,9 +135,9 @@ reader
         const res = paper.solve();
         if (res) {
           if (args.tubes) {
-            printTubes(paper, args.color);
+            printTubes(paper, args.colors);
           } else {
-            printSimple(paper, args.color);
+            printSimple(paper, args.colors);
           }
         } else {
           console.log('IMPOSSIBLE');
