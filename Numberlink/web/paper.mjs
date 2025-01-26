@@ -66,6 +66,7 @@ export default class Paper {
   chooseConnection(pos) {
     this.calls++;
     this._trace(`chooseConnection: ${pos}`);
+    this._conend('inicio');
 
     // Final
     if (pos === 0) return this.validate();
@@ -122,8 +123,7 @@ export default class Paper {
           }
           break;
         // NW
-        case N:
-        case W:
+        case NW:
           // Check if the 'by others implied' turn is actually allowed
           // We don't need to check the source connection here like in N|E
           if (this.con[posNW] === NW || this.source[posNW]) {
@@ -152,7 +152,7 @@ export default class Paper {
           break;
       }
     }
-    console.log(`chooseConnection(${pos}) returns false`);
+    this._conend(`chooseConnection(${pos}) returns false`);
     return false;
   }
   // Check that a SW line of corners, starting at pos, will not intersect a SE or NW line
@@ -248,9 +248,17 @@ export default class Paper {
 
   _trace(msg) {
     console.log(msg);
-    for (const callSite of util.getCallSites()) {
-      if (callSite.functionName === 'solve') break;
-      console.log('---', callSite.functionName);
+    let inside = false;
+    for (const callSite of util.getCallSites().toReversed()) {
+      switch (callSite.functionName) {
+        case 'solve':
+          inside = true;
+          break;
+        case '_trace':
+          continue;
+        default:
+          if (inside) console.log('---', callSite.functionName);
+      }
     }
   }
   _conend(msg) {
