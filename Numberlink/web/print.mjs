@@ -39,11 +39,11 @@ export function printSimple(paper, color) {
   const table = fillTable(paper);
   console.log(paper.width - 2, paper.height - 2);
   for (let y = 1; y < paper.height - 1; y++) {
-    const line = '';
+    let line = '';
     for (let x = 1; x < paper.width - 1; x++) {
       const pos = y * paper.width + x;
-      const col = colors[pos];
-      line += col === '' ? table[pos] : `${col}${table[pos]}${RESET}`;
+      const col = colors[pos] ?? false;
+      line += col ? `${col}${table[pos]}${RESET}` : table[pos];
     }
     console.log(line);
   }
@@ -55,13 +55,13 @@ export function printSimple(paper, color) {
 export function printTubes(paper, color) {
   const colors = makeColorTable(paper, !color);
   for (let y = 1; y < paper.height - 1; y++) {
-    const line = '';
+    let line = '';
     for (let x = 1; x < paper.width - 1; x++) {
       const pos = y * paper.width + x;
       const val = paper.table[pos];
       const c = val === EMPTY ? TUBE[paper.con[pos]] : val;
-      const col = colors[pos];
-      line += col === '' ? c : `${col}${c}${RESET}`;
+      const col = colors[pos] ?? false;
+      line += col ? `${col}${c}${RESET}` : c;
     }
     console.log(line);
   }
@@ -113,7 +113,7 @@ function fillTable(paper) {
         const paint = table[pos];
         for (const dir of DIRS) {
           const next = pos + paper.vctr[dir];
-          if (paper.con[pos] & (dir !== 0) && table[next] === EMPTY) {
+          if ((paper.con[pos] & dir) !== 0 && table[next] === EMPTY) {
             table[next] = paint;
             queue.push(next);
           }
