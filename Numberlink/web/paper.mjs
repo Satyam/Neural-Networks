@@ -65,8 +65,6 @@ export default class Paper {
   }
   chooseConnection(pos) {
     this.calls++;
-    this._trace(`chooseConnection: ${pos}`);
-    this._conend('inicio');
 
     // Final
     if (pos === 0) return this.validate();
@@ -152,7 +150,6 @@ export default class Paper {
           break;
       }
     }
-    this._conend(`chooseConnection(${pos}) returns false`);
     return false;
   }
   // Check that a SW line of corners, starting at pos, will not intersect a SE or NW line
@@ -178,10 +175,6 @@ export default class Paper {
 
   tryConnection(srcPos, dirs) {
     // Extract the (last) bit which we will process in this call
-    this._trace(
-      `tryConnection srcPos:${srcPos}, dirs:${dirs}, dir:${dirs & -dirs}`
-    );
-    this._conend('inicio');
     const dir = dirs & -dirs;
 
     const nextPos = srcPos + this.vctr[dir];
@@ -224,7 +217,6 @@ export default class Paper {
     this.end[srcEnd] = nextEnd;
     this.end[nextEnd] = srcEnd;
 
-    this._conend('before recurse');
     // Remove the done bit and recurse if nessecary
     const dir2 = dirs & ~dir;
     let res = false;
@@ -242,56 +234,13 @@ export default class Paper {
       this.end[srcEnd] = oldSrcEnd;
       this.end[nextEnd] = oldNextEnd;
     }
-    this._conend(`tryConnection(${srcPos},${dirs}) returns with ${res}`);
     return res;
   }
 
-  _trace(msg) {
-    console.log(msg);
-    let inside = false;
-    for (const callSite of util.getCallSites().toReversed()) {
-      switch (callSite.functionName) {
-        case 'solve':
-          inside = true;
-          break;
-        case '_trace':
-          continue;
-        default:
-          if (inside) console.log('---', callSite.functionName);
-      }
-    }
-  }
-  _conend(msg) {
-    console.log(msg);
-    const fmtPos = (what, start, end) =>
-      Array.from(what)
-        .slice(start, end)
-        .map((v) => String(v).padStart(2, ' '))
-        .join(' ');
-    for (let y = 1; y < this.height - 1; y++) {
-      const start = y * this.width + 1;
-      const end = start + this.width - 2;
-      console.log(
-        String(start).padStart(2, ' '),
-        'c:',
-        fmtPos(this.con, start, end),
-        '  e:',
-        fmtPos(this.end, start, end),
-        '  t:',
-        this.table.slice(start, end).join(''),
-        '  s:',
-        Array.from(this.source)
-          .slice(start, end)
-          .map((v) => (v ? 'X' : '.'))
-          .join('')
-      );
-    }
-  }
   // As it turns out, though our algorithm avoids must self-touching flows, it
   // can be tricked to allow some. Hence we need this validation to filter out
   // the false positives
   validate() {
-    console.log('validate');
     const w = this.width;
     const h = this.height;
     const vtable = Array(w * h);
