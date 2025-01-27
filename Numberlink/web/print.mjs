@@ -3,7 +3,6 @@ import { DIRS, EMPTY } from './paper.mjs';
 const RESET = '\x1b[0m';
 const BOLD = '\x1b[1m';
 const COLORS = {
-  BLACK: '\x1b[30m',
   RED: '\x1b[31m',
   GREEN: '\x1b[32m',
   YELLOW: '\x1b[33m',
@@ -11,6 +10,7 @@ const COLORS = {
   MAGENTA: '\x1b[35m',
   CYAN: '\x1b[36m',
   WHITE: '\x1b[37m',
+  BLACK: '\x1b[30m',
 };
 const TUBE = [
   ' ',
@@ -76,7 +76,7 @@ function makeColorTable(paper, empty) {
 
     let next = 0;
     const clrs = Object.values(COLORS);
-    const available = clrs + clrs.map((c) => BOLD + c);
+    const available = clrs.concat(clrs.map((c) => BOLD + c));
     const mapping = {};
 
     for (let y = 1; y < paper.height - 1; y++) {
