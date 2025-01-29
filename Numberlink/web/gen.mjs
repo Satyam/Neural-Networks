@@ -46,7 +46,7 @@ export function generate(width, height) {
       }
     }
     // Add padding in case of odd height
-    if (height % 2 == 1) {
+    if (height % 2 === 1) {
       for (let x = 0; x < width - 1; x += 2) {
         table[height - 1][x] = alpha;
         table[height - 1][x + 1] = alpha;
@@ -55,7 +55,7 @@ export function generate(width, height) {
     }
     // In case of odd width, add a single in the corner.
     // We will merge it into a real flow after shuffeling
-    if (width % 2 == 1) {
+    if (width % 2 === 1) {
       table[height - 1][width - 1] = alpha;
     }
     return table;
@@ -67,8 +67,8 @@ export function generate(width, height) {
       const x = rand.intn(width - 1);
       const y = rand.intn(height - 1);
       if (
-        table[y][x] == table[y][x + 1] &&
-        table[y + 1][x] == table[y + 1][x + 1]
+        table[y][x] === table[y][x + 1] &&
+        table[y + 1][x] === table[y + 1][x + 1]
       ) {
         // Horizontal case
         // aa \ ab
@@ -76,8 +76,8 @@ export function generate(width, height) {
         table[y + 1][x] = table[y][x];
         table[y][x + 1] = table[y + 1][x + 1];
       } else if (
-        table[y][x] == table[y + 1][x] &&
-        table[y][x + 1] == table[y + 1][x + 1]
+        table[y][x] === table[y + 1][x] &&
+        table[y][x + 1] === table[y + 1][x + 1]
       ) {
         // Vertical case
         // ab \ aa
@@ -89,12 +89,12 @@ export function generate(width, height) {
   }
 
   function oddCorner() {
-    if (width % 2 == 1 && height % 2 == 1) {
+    if (width % 2 === 1 && height % 2 === 1) {
       // Horizontal case:
       // aax
       if (
         width > 2 &&
-        table[height - 1][width - 3] == table[height - 1][width - 2]
+        table[height - 1][width - 3] === table[height - 1][width - 2]
       ) {
         table[height - 1][width - 1] = table[height - 1][width - 2];
       }
@@ -103,7 +103,7 @@ export function generate(width, height) {
       // ax
       if (
         height > 2 &&
-        table[height - 3][width - 1] == table[height - 2][width - 1]
+        table[height - 3][width - 1] === table[height - 2][width - 1]
       ) {
         table[height - 1][width - 1] = table[height - 2][width - 1];
       }
