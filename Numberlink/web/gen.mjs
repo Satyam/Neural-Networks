@@ -180,21 +180,21 @@ export function generate(width, height) {
   }
 
   function flatten() {
-    let alpha = -1;
+    let alpha = 0;
+    const translation = {};
+
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        if (table[y][x] >= 0) {
-          fill(x, y, alpha);
-          alpha -= 1;
+        const val = table[y][x];
+        if (val >= 0) {
+          if (!translation[val]) {
+            translation[val] = ++alpha;
+          }
+          table[y][x] = translation[val];
         }
       }
     }
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        table[y][x] = -table[y][x] - 1;
-      }
-    }
-    return -alpha - 1;
+    return alpha;
   }
 
   function getNeighbours(x, y, random = false) {
