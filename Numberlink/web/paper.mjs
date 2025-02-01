@@ -235,37 +235,36 @@ export default class Paper {
   // can be tricked to allow some. Hence we need this validation to filter out
   // the false positives
   validate() {
-    const w = this.width;
-    const h = this.height;
-    const vtable = Array(w * h);
-    for (let pos = 0; pos < w * h; pos++) {
+    const size = this.width * this.height;
+    const visitedTable = Array(size);
+    for (let pos = 0; pos < size; pos++) {
       if (this.source[pos]) {
         // Run through the flow
         const alpha = this.table[pos];
-        let p = pos;
-        let old = pos;
-        let next = pos;
+        let probePos = pos;
+        let oldPos = pos;
+        let nextPos = pos;
         for (;;) {
           // Mark our path as we go
-          vtable[p] = alpha;
+          visitedTable[probePos] = alpha;
           for (const dir of DIRS) {
-            const cand = p + this.vctr[dir];
-            if (this.con[p] & dir) {
-              if (cand !== old) {
-                next = cand;
+            const neighborPos = probePos + this.vctr[dir];
+            if (this.con[probePos] & dir) {
+              if (neighborPos !== oldPos) {
+                nextPos = neighborPos;
               }
-            } else if (vtable[cand] === alpha) {
+            } else if (visitedTable[neighborPos] === alpha) {
               // We aren't connected, but it has our color,
-              // this is exactly what we doesn't want.
+              // this is exactly what we don't want.
               return false;
             }
           }
           // We have reached the end
-          if (old !== p && this.source[p]) {
+          if (oldPos !== probePos && this.source[probePos]) {
             break;
           }
-          old = p;
-          p = next;
+          oldPos = probePos;
+          probePos = nextPos;
         }
       }
     }
