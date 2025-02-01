@@ -35,7 +35,7 @@ export function generate(width, height) {
   function tile() {
     const table = [];
     for (let y = 0; y < height; y++) {
-      table[y] = new Int16Array(width);
+      table[y] = new Uint16Array(width);
     }
     let alpha = 0;
     for (let y = 0; y < height - 1; y += 2) {
