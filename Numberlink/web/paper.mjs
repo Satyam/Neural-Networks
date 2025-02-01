@@ -1,5 +1,3 @@
-import util from 'node:util';
-
 const GRASS = '#';
 export const EMPTY = '.';
 
@@ -69,12 +67,11 @@ export default class Paper {
     // Final
     if (pos === 0) return this.validate();
 
-    const w = this.width;
     const posNE = pos + this.vctr[NE];
     const posNW = pos + this.vctr[NW];
     if (this.source[pos]) {
       switch (this.con[pos]) {
-        // If the source is not yet connection
+        // If the source is not yet connected
         case 0:
           // We can't connect E if we have a NE corner
           if (this.con[posNE] !== SW) {
@@ -133,7 +130,7 @@ export default class Paper {
           // Check that we are either extending a corner or starting at a non-occupied source
           if (
             this.con[posNE] === NE ||
-            (this.source[posNE] && (this.con[posNE] & NE) !== 0)
+            (this.source[posNE] && this.con[posNE] & NE)
           ) {
             if (this.tryConnection(pos, E)) {
               return true;
@@ -198,10 +195,10 @@ export default class Paper {
       return false;
     }
     // No tight corners (Just an optimization)
-    if (this.con[srcPos] !== 0) {
+    if (this.con[srcPos]) {
       const dir2 = this.con[srcPos + this.vctr[this.con[srcPos]]];
       const dir3 = this.con[srcPos] | dir;
-      if (DIAG[dir2] && DIAG[dir3] && (dir2 & dir3) !== 0) {
+      if (DIAG[dir2] && DIAG[dir3] && dir2 & dir3) {
         return false;
       }
     }
@@ -217,14 +214,11 @@ export default class Paper {
     this.end[srcEnd] = nextEnd;
     this.end[nextEnd] = srcEnd;
 
-    // Remove the done bit and recurse if nessecary
+    // Remove the done bit and recurse if necessary
     const dir2 = dirs & ~dir;
-    let res = false;
-    if (dir2 === 0) {
-      res = this.chooseConnection(this.next[srcPos]);
-    } else {
-      res = this.tryConnection(srcPos, dir2);
-    }
+    const res = dir2
+      ? this.tryConnection(srcPos, dir2)
+      : this.chooseConnection(this.next[srcPos]);
 
     // Recreate the state, but not if a solution was found,
     // since we'll let it bubble all the way to the caller
@@ -237,7 +231,7 @@ export default class Paper {
     return res;
   }
 
-  // As it turns out, though our algorithm avoids must self-touching flows, it
+  // As it turns out, though our algorithm avoids most self-touching flows, it
   // can be tricked to allow some. Hence we need this validation to filter out
   // the false positives
   validate() {
@@ -246,7 +240,7 @@ export default class Paper {
     const vtable = Array(w * h);
     for (let pos = 0; pos < w * h; pos++) {
       if (this.source[pos]) {
-        // Run throw the flow
+        // Run through the flow
         const alpha = this.table[pos];
         let p = pos;
         let old = pos;
@@ -256,7 +250,7 @@ export default class Paper {
           vtable[p] = alpha;
           for (const dir of DIRS) {
             const cand = p + this.vctr[dir];
-            if ((this.con[p] & dir) !== 0) {
+            if (this.con[p] & dir) {
               if (cand !== old) {
                 next = cand;
               }
@@ -285,16 +279,16 @@ export default class Paper {
 
     // Direction vector table
     for (let dir = 0; dir < 16; dir++) {
-      if ((dir & N) !== 0) {
+      if (dir & N) {
         this.vctr[dir] += -w;
       }
-      if ((dir & E) !== 0) {
+      if (dir & E) {
         this.vctr[dir] += 1;
       }
-      if ((dir & S) !== 0) {
+      if (dir & S) {
         this.vctr[dir] += w;
       }
-      if ((dir & W) !== 0) {
+      if (dir & W) {
         this.vctr[dir] -= 1;
       }
     }
@@ -345,7 +339,7 @@ export default class Paper {
     this.end = Uint16Array.from({ length: size }, (_, pos) => pos);
 
     // Connection table
-    this.con = new Uint16Array(w * h).fill(0);
+    this.con = new Uint16Array(size).fill(0);
   }
 
   // Makes a slice of the interval [i, i+step, i+2step, ..., j)

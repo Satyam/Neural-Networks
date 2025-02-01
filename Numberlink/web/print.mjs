@@ -113,7 +113,7 @@ function fillTable(paper) {
         const paint = table[pos];
         for (const dir of DIRS) {
           const next = pos + paper.vctr[dir];
-          if ((paper.con[pos] & dir) !== 0 && table[next] === EMPTY) {
+          if (paper.con[pos] & dir && table[next] === EMPTY) {
             table[next] = paint;
             queue.push(next);
           }
