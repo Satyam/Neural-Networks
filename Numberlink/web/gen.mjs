@@ -18,19 +18,19 @@ export function generate(width, height) {
     if (colorsUsed > SIGMA.length) {
       throw new Error('Error: Not enough printable characters to print puzzle');
     }
-    const pzzl = Array(height).fill('');
-    const sltn = Array(height).fill('');
+    const puzzle = Array(height).fill('');
+    const solution = Array(height).fill('');
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        sltn[y] += SIGMA[table[y][x]];
+        solution[y] += SIGMA[table[y][x]];
         if (isFlowHead(x, y)) {
-          pzzl[y] += SIGMA[table[y][x]];
+          puzzle[y] += SIGMA[table[y][x]];
         } else {
-          pzzl[y] += '.';
+          puzzle[y] += '.';
         }
       }
     }
-    return [pzzl, sltn];
+    return [puzzle, solution];
   }
   function tile() {
     const table = [];

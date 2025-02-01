@@ -90,11 +90,9 @@ if (args.generate) {
         `The width and height arguments must be greater or equal to 2 ${args.generate}`
       );
     }
-    const [pzle, _] = generate(width, height);
+    const [puzzle, solution] = generate(width, height);
     console.log(width, height);
-    for (const line of pzle) {
-      console.log(line);
-    }
+    for (let i = 0; i < height; i++) console.log(puzzle[i], solution[i]);
     process.exit(0);
   } else {
     throw new Error(`Unable to parse arguments to --generate ${args.generate}`);
