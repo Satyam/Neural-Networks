@@ -46,7 +46,7 @@ export function generate(width, height) {
       }
     }
     // Add padding in case of odd height
-    if (height % 2 === 1) {
+    if (height & 1) {
       for (let x = 0; x < width - 1; x += 2) {
         table[height - 1][x] = alpha;
         table[height - 1][x + 1] = alpha;
@@ -55,7 +55,7 @@ export function generate(width, height) {
     }
     // In case of odd width, add a single in the corner.
     // We will merge it into a real flow after shuffeling
-    if (width % 2 === 1) {
+    if (width & 1) {
       table[height - 1][width - 1] = alpha;
     }
     return table;
@@ -89,7 +89,7 @@ export function generate(width, height) {
   }
 
   function oddCorner() {
-    if (width % 2 === 1 && height % 2 === 1) {
+    if (width & 1 && height & 1) {
       // Horizontal case:
       // aax
       if (
