@@ -1,8 +1,9 @@
 import { WIDTH, HEIGHT, appendToSVG, createSVGEl, clearSVG } from './svg.js';
-import { readInt } from './utils.js';
+import { readInt, getRandomPoint } from './utils.js';
 
 export function classify(neuralNetwork) {
   const dotColors = ['blue', 'green', 'red', 'purple'];
+  const numPoints = readInt('#numPoints');
   function dotColor(output) {
     const maxIndex = output.indexOf(Math.max(...output));
     return dotColors[maxIndex];
@@ -11,9 +12,8 @@ export function classify(neuralNetwork) {
   drawAxes();
   const t1 = performance.now();
 
-  for (let i = readInt('#numPoints'); i--; ) {
-    const x = Math.random() * 2 - 1; // Random x-coordinate between -1 and 1
-    const y = Math.random() * 2 - 1; // Random y-coordinate between -1 and 1
+  for (let i = numPoints; i--; ) {
+    const [x, y] = getRandomPoint();
     const output = neuralNetwork.feedForward([x, y]);
     const predictedColor = dotColor(output);
     drawPoint(x, y, predictedColor);

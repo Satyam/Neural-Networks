@@ -1,4 +1,4 @@
-import { sigmoid } from './utils.js';
+import { sigmoid, randomCoeficient } from './utils.js';
 
 export class NeuralNetwork {
   #sizes;
@@ -11,16 +11,13 @@ export class NeuralNetwork {
     this.#net = this.#sizes.map((size, i) => ({
       size,
       biases: i
-        ? Array.from({ length: size }, () => Math.random() * 2 - 1)
+        ? Float64Array.from({ length: size }, randomCoeficient)
         : undefined,
-      layer: new Array(size),
+      layer: new Float64Array(size),
       // weights represent how to reach this layer from the previous.
       weights: i
         ? Array.from({ length: size }, () =>
-            Array.from(
-              { length: this.#sizes[i - 1] },
-              () => Math.random() * 2 - 1
-            )
+            Float64Array.from({ length: this.#sizes[i - 1] }, randomCoeficient)
           )
         : undefined,
     }));
