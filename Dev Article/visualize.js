@@ -75,11 +75,8 @@ export function visualizeNetwork(neuralNetwork, labels = {}) {
   visualizeLayers(neuralNetwork, nodes);
 }
 
-const rgb = (value) => `rgb(
-  ${value < 0 ? Math.floor(-value * 255) : 0} 
-  0 
-  ${value > 0 ? Math.floor(value * 255) : 0}
-)`;
+const cssColor = (value) =>
+  `hsl(${value > 0 ? 240 : 0} 100 50 / ${(Math.abs(value) * 4) / 5 + 0.2})`;
 
 function visualizeWeights(neuralNetwork, nodes) {
   let maxWeight = 0;
@@ -118,7 +115,7 @@ function drawWeight([x1, y1], [x2, y2], value, maxWeight) {
         y1,
         x2,
         y2,
-        stroke: rgb(value / maxWeight),
+        stroke: cssColor(value / maxWeight),
         class: 'weight',
       },
       createSVGEl('title', {}, value.toFixed(3))
@@ -156,7 +153,7 @@ function drawBias(x, y, value, maxBias) {
         y: y - NEURON_SIZE,
         width: NEURON_SIZE,
         height: 2 * NEURON_SIZE,
-        fill: rgb(value / maxBias),
+        fill: cssColor(value / maxBias),
       },
       createSVGEl('title', {}, value.toFixed(3))
     )
@@ -184,7 +181,7 @@ function drawNeuron(x, y, value) {
         cx: x,
         cy: y,
         r: NEURON_SIZE / 2,
-        fill: rgb(value),
+        fill: cssColor(value),
       },
       createSVGEl(
         'title',
