@@ -1,23 +1,31 @@
 import { WIDTH, HEIGHT, appendToSVG, createSVGEl, clearSVG } from './svg.js';
-import { readInt, getRandomPoint } from './utils.js';
+import { readInt, getRandomPoint, outputEncoding } from './utils.js';
 
 export function classify(neuralNetwork) {
   const dotColors = ['blue', 'green', 'red', 'purple'];
   const numPoints = readInt('#numPoints');
-  function dotColor(output) {
-    const maxIndex = output.indexOf(Math.max(...output));
-    return dotColors[maxIndex];
+  function outputIndex(output) {
+    return output.indexOf(Math.max(...output));
   }
+
   clearSVG();
   drawAxes();
   const t1 = performance.now();
 
+  let success = 0;
   for (let i = numPoints; i--; ) {
     const [x, y] = getRandomPoint();
+    const expectedOutput = outputEncoding(x, y);
+    const expectedIndex = outputIndex(expectedOutput);
     const output = neuralNetwork.feedForward([x, y]);
-    const predictedColor = dotColor(output);
-    drawPoint(x, y, predictedColor);
+    const nodeIndex = outputIndex(output);
+    drawPoint(x, y, dotColors[nodeIndex]);
+    if (nodeIndex === expectedIndex) success++;
   }
+  document.getElementById('success').innerText = `Success: ${(
+    (success / numPoints) *
+    100
+  ).toFixed(2)}%`;
   console.log('classify total', performance.now() - t1);
 }
 

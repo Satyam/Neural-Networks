@@ -26,7 +26,9 @@ export class NeuralNetwork {
   get numLayers() {
     return this.#numLayers;
   }
-
+  getSizes() {
+    return this.#sizes;
+  }
   getSize(numLayer) {
     return this.#net[numLayer].size;
   }

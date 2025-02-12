@@ -17,6 +17,7 @@ function setupListeners() {
 const rxListOfIntegers = /^((\s*(\d+\s*\,\s*)*\d+\s*)|\s*)$/;
 function initialize() {
   clearSVG();
+  document.getElementById('success').innerHTML = '';
   const hiddenLayers = document.getElementById('hiddenLayers').value.trim();
   if (!rxListOfIntegers.test(hiddenLayers)) {
     alert('Hidden layers must be a comma-separted list of positive integers');
@@ -36,6 +37,7 @@ setupListeners();
 initialize();
 
 function trainNetwork() {
+  neuralNetwork = new NeuralNetwork(neuralNetwork.getSizes());
   train(neuralNetwork);
 }
 
@@ -46,6 +48,6 @@ function classifyPoints() {
 function visualize() {
   visualizeNetwork(neuralNetwork, {
     input: ['X', 'Y'],
-    output: ['Green (TL)', 'Purple (TR)', 'Blue (BL)', 'Red (BR)'],
+    output: ['Green ↖️', 'Purple ↗️', 'Blue ↙️', 'Red ↘️'],
   });
 }
