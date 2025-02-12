@@ -51,3 +51,7 @@ svg {
 .weight {
   stroke-width: 4;
 }
+.node {
+  fill: silver;
+  r: 10;
+}

@@ -72,7 +72,8 @@ export function visualizeNetwork(neuralNetwork, labels = {}) {
   drawLabels(neuralNetwork, nodes, labels);
   visualizeWeights(neuralNetwork, nodes);
   visualizeBiases(neuralNetwork, nodes);
-  visualizeLayers(neuralNetwork, nodes);
+  drawNodes(nodes);
+  // visualizeLayers(neuralNetwork, nodes);
 }
 
 const cssColor = (value) =>
@@ -160,34 +161,48 @@ function drawBias(x, y, value, maxBias) {
   );
 }
 
-function visualizeLayers(neuralNetwork, nodes) {
-  const numLayers = neuralNetwork.numLayers;
-  for (let l = 0; l < numLayers; l++) {
-    const size = neuralNetwork.getSize(l);
-    const layer = neuralNetwork.getLayer(l);
-    for (let n = 0; n < size; n++) {
-      const [x, y] = nodes[l][n];
-      drawNeuron(x, y, layer[n]);
+function drawNodes(nodes) {
+  for (const row of nodes) {
+    for (const [x, y] of row) {
+      appendToSVG(
+        createSVGEl('circle', {
+          class: 'node',
+          cx: x,
+          cy: y,
+        })
+      );
     }
   }
 }
 
-function drawNeuron(x, y, value) {
-  appendToSVG(
-    createSVGEl(
-      'circle',
-      {
-        class: 'neuron',
-        cx: x,
-        cy: y,
-        r: NEURON_SIZE / 2,
-        fill: cssColor(value),
-      },
-      createSVGEl(
-        'title',
-        {},
-        typeof value === 'number' ? value.toFixed(3) : '??'
-      )
-    )
-  );
-}
+// function visualizeLayers(neuralNetwork, nodes) {
+//   const numLayers = neuralNetwork.numLayers;
+//   for (let l = 0; l < numLayers; l++) {
+//     const size = neuralNetwork.getSize(l);
+//     const layer = neuralNetwork.getLayer(l);
+//     for (let n = 0; n < size; n++) {
+//       const [x, y] = nodes[l][n];
+//       drawNeuron(x, y, layer[n]);
+//     }
+//   }
+// }
+
+// function drawNeuron(x, y, value) {
+//   appendToSVG(
+//     createSVGEl(
+//       'circle',
+//       {
+//         class: 'neuron',
+//         cx: x,
+//         cy: y,
+//         r: NEURON_SIZE / 2,
+//         fill: cssColor(value),
+//       },
+//       createSVGEl(
+//         'title',
+//         {},
+//         typeof value === 'number' ? value.toFixed(3) : '??'
+//       )
+//     )
+//   );
+// }
