@@ -11,15 +11,21 @@
         <legend>Train</legend>
         <label
           >Training Data Size
-          <input id="trainingDataSize" value="5000" />
+          <input
+            id="trainingDataSize"
+            value="5000"
+            type="number"
+            step="100"
+            min="100"
+          />
         </label>
         <label
-          >Training iterations
-          <input id="trainingIterations" value="50000" />
+          >Repetitions
+          <input id="repetitions" value="10" type="number" min="1" />
         </label>
         <label
           >Learning Rate
-          <input id="learningRate" value="0.03" />
+          <input id="learningRate" value="0.03" type="number" step="0.01" />
         </label>
         <label
           >Comma-separated number of nodes of hidden layers. <br />
@@ -35,7 +41,7 @@
         <legend>Classify</legend>
         <label
           >points to classify
-          <input id="numPoints" value="400" />
+          <input id="numPoints" value="400" type="number" step="100" min="1" />
         </label>
         <div class="buttons">
           <button id="classify">Classify Points</button>
