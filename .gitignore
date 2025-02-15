@@ -1,5 +1,6 @@
 Numberlink/janko/
-Mnist/
+Mnist/*.csv
+Mnist/MNIST in CSV.html
 self-driving-car-main/
 Numberlink/Numberlink solver - Noq.html
 Numberlink/Numberlink solver - Noq_files/
@@ -9,3 +10,4 @@ numberlink-master/
 neural-networks-and-deep-learning/
 node_modules/
 Numberlink/web/numberlink.js
+Numberlink/web/*.nl
