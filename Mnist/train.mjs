@@ -11,12 +11,12 @@ const neuralNetwork = new NeuralNetwork(784, 15, 10);
 
 const output = Array(10).fill(0);
 let prevVal = 0;
-let limit = 1000;
+let limit = 100000;
 const tTrain = performance.now();
 readTrainLine.on('line', (line) => {
   if (limit) {
     limit--;
-    const [value, ...pixels] = line.split(',');
+    const [value, ...pixels] = line.split(',').map((v) => parseInt(v, 10));
     output[prevVal] = 0;
     output[value] = 1;
     prevVal = value;
@@ -37,12 +37,12 @@ readTrainLine.on('close', () => {
   let success = 0;
   readTestLine.on('line', (line) => {
     numTests++;
-    const [value, ...pixels] = line.split(',');
+    const [value, ...pixels] = line.split(',').map((v) => parseInt(v, 10));
     output[prevVal] = 0;
     output[value] = 1;
     prevVal = value;
     const found = neuralNetwork.feedForward(pixels);
-    if (value === output.indexOf(Math.max(...found))) success++;
+    if (value === found.indexOf(Math.max(...found))) success++;
   });
 
   readTestLine.on('close', () => {
