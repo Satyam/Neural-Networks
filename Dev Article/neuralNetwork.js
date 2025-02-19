@@ -46,10 +46,10 @@ export class NeuralNetwork {
     return {
       numLayers: this.#numLayers,
       sizes: this.#sizes.slice(),
-      net: this.#net.map((level) => ({
-        size: level.size,
-        biases: Array.from(level.biases ?? []),
-        weights: level.weights?.map((w) => Array.from(w)) ?? [],
+      net: this.#net.map(({ size, biases, weights }) => ({
+        size,
+        biases: Array.from(biases ?? []),
+        weights: weights?.map((w) => Array.from(w)) ?? [],
       })),
     };
   }
@@ -62,69 +62,67 @@ export class NeuralNetwork {
         } does not match current network: ${this.#numLayers}`
       );
     }
-    if (newNet.sizes.some((size, l) => size !== this.#sizes[l])) {
+    if (newNet.sizes.some((size, step) => size !== this.#sizes[step])) {
       throw new Error(
         `Size of layers of new data: [${newNet.sizes.join(',')}] 
         does not match current network: [${this.#sizes.join(',')}]`
       );
     }
-    newNet.net.forEach((layer, l) => {
-      if (layer.size !== this.#sizes[l]) {
+    newNet.net.forEach(({ size, biases, weights }, step) => {
+      if (size !== this.#sizes[step]) {
         throw new Error(
-          `Size of layer ${l} does not match current network: ${this.#sizes[l]}`
+          `Size of layer ${step} does not match current network: ${
+            this.#sizes[step]
+          }`
         );
       }
-      if (l) {
-        if (!Array.isArray(layer.biases)) {
+      if (step) {
+        if (!Array.isArray(biases)) {
           throw new Error(`Biases should be an array`);
         }
-        if (!Array.isArray(layer.weights)) {
+        if (!Array.isArray(weights)) {
           throw new Error(`Weights should be an array of arrays`);
         }
-        if (layer.biases.length !== layer.size) {
+        if (biases.length !== size) {
           throw new Error(
-            `Not enough biases: ${layer.biases.length} for that size: ${layer.size}`
+            `Not enough biases: ${biases.length} for that size: ${size}`
           );
         }
-        layer.biases.forEach((b, row) => {
+        biases.forEach((b, row) => {
           if (!Number.isFinite(b)) {
             throw new Error(
-              `Value of bias ${row} on layer ${l} should be a number: >${b}`
+              `Value of bias ${row} on layer ${step} should be a number: >${b}`
             );
           }
-          this.#net[l].biases[row] = b;
+          this.#net[step].biases[row] = b;
         });
-        if (layer.weights.length !== layer.size) {
+        if (weights.length !== size) {
           throw new Error(
-            `Not enough weights: ${layer.weights.length} for that size: ${layer.size}`
+            `Not enough weights: ${weights.length} for that size: ${size}`
           );
         }
-        layer.weights.forEach((ws, row) => {
+        weights.forEach((ws, row) => {
           if (!Array.isArray(ws)) {
             throw new Error(`Weights should be an array of arrays`);
           }
-          if (ws.length !== this.#sizes[l - 1]) {
+          if (ws.length !== this.#sizes[step - 1]) {
             throw new Error(
-              `Not enough weights : ${layer.biases.length} for that size: ${layer.size}`
+              `Not enough weights : ${biases.length} for that size: ${size}`
             );
           }
           ws.forEach((w, i) => {
             if (!Number.isFinite(w)) {
               throw new Error(
-                `Value of weight ${i} on row ${row} on layer ${l} should be a number: >${w}`
+                `Value of weight ${i} on row ${row} on layer ${step} should be a number: >${w}`
               );
             }
-            this.#net[l].weights[row][i] = w;
+            this.#net[step].weights[row][i] = w;
           });
         });
       } else {
         if (
-          (layer.biases &&
-            Array.isArray(layer.biases) &&
-            layer.biases.length) ||
-          (layer.weights &&
-            Array.isArray(layer.weights) &&
-            layer.weights.length)
+          (biases && Array.isArray(biases) && biases.length) ||
+          (weights && Array.isArray(weights) && weights.length)
         ) {
           throw new Error(
             `In the first layer, biases and weights should not be present or be empty arrays`
@@ -133,6 +131,7 @@ export class NeuralNetwork {
       }
     });
   }
+
   feedForward(inputs) {
     const net = this.#net;
     net[0].layer = inputs;
@@ -157,9 +156,9 @@ export class NeuralNetwork {
     let prevErrors = [];
     let prevWeights;
     for (let step = this.#numLayers - 1; step > 0; step--) {
-      let errors = [];
+      const errors = [];
       const { size, layer, biases, weights } = this.#net[step];
-      const nextLayer = this.#net[step - 1].layer;
+      const prevLayer = this.#net[step - 1].layer;
       for (let row = 0; row < size; row++) {
         let err = 0;
         if (step == this.#numLayers - 1) {
@@ -170,9 +169,10 @@ export class NeuralNetwork {
           }
         }
         errors[row] = err;
-        const weightFactor = learningRate * err * layer[row] * (1 - layer[row]);
-        for (let col = 0; col < nextLayer.length; col++) {
-          weights[row][col] += weightFactor * nextLayer[col];
+        const correctionFactor =
+          learningRate * err * layer[row] * (1 - layer[row]);
+        for (let col = 0; col < prevLayer.length; col++) {
+          weights[row][col] += correctionFactor * prevLayer[col];
         }
         biases[row] += learningRate * err;
       }
