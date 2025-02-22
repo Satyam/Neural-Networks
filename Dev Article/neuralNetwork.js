@@ -141,7 +141,8 @@ export class NeuralNetwork {
       for (let row = 0; row < size; row++) {
         layer[row] = sigmoid(
           prevLayer.reduce(
-            (out, prevValue, col) => out + weights[row][col] * prevValue,
+            (out, prevValue, prevRow) =>
+              out + weights[row][prevRow] * prevValue,
             0
           ) + biases[row]
         );
@@ -153,26 +154,31 @@ export class NeuralNetwork {
   train(inputs, target, learningRate) {
     this.feedForward(inputs);
 
+    /*
+    Here we are back traking so the prev and next prefixes are backwards.
+    Previous items are towards the end of the network, 
+    next items are towards the begining.
+    */
     let prevErrors = [];
     let prevWeights;
     for (let step = this.#numLayers - 1; step > 0; step--) {
       const errors = [];
       const { size, layer, biases, weights } = this.#net[step];
-      const prevLayer = this.#net[step - 1].layer;
+      const nextLayer = this.#net[step - 1].layer;
       for (let row = 0; row < size; row++) {
         let err = 0;
         if (step == this.#numLayers - 1) {
           err = target[row] - layer[row];
         } else {
-          for (let col = 0; col < prevErrors.length; col++) {
-            err += prevWeights[col][row] * prevErrors[col];
+          for (let prevRow = 0; prevRow < prevErrors.length; prevRow++) {
+            err += prevWeights[prevRow][row] * prevErrors[prevRow];
           }
         }
         errors[row] = err;
         const correctionFactor =
           learningRate * err * layer[row] * (1 - layer[row]);
-        for (let col = 0; col < prevLayer.length; col++) {
-          weights[row][col] += correctionFactor * prevLayer[col];
+        for (let nextRow = 0; nextRow < nextLayer.length; nextRow++) {
+          weights[row][nextRow] += correctionFactor * nextLayer[nextRow];
         }
         biases[row] += learningRate * err;
       }
