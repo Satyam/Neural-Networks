@@ -1,4 +1,4 @@
-import { test, describe, before } from 'node:test';
+import { test, describe, before, after } from 'node:test';
 import { equal } from 'node:assert/strict';
 
 import Network from './network.mjs';
@@ -171,7 +171,6 @@ describe('OR Gate', () => {
       network.train(trainingItem.input, trainingItem.output);
     }
   });
-
   test('should return 0 for a [0,0] input', () => {
     network.activate([0, 0]);
     const result = network.runInputSigmoid();
@@ -195,4 +194,58 @@ describe('OR Gate', () => {
     const result = network.runInputSigmoid();
     equal(Math.round(result[0]), 1);
   });
+});
+
+describe('Binary Adder', () => {
+  let network;
+
+  // Training data for a xor gate
+  const trainingData = [
+    {
+      input: [0, 0],
+      output: [0, 0],
+    },
+    {
+      input: [0, 1],
+      output: [1, 0],
+    },
+    {
+      input: [1, 0],
+      output: [1, 0],
+    },
+    {
+      input: [1, 1],
+      output: [0, 1],
+    },
+  ];
+
+  before(async () => {
+    // Create the network
+    network = new Network([2, 2, 2]);
+
+    // Set a learning rate
+    const learningRate = 0.3;
+    network.setLearningRate(learningRate);
+
+    // Train the network
+    for (var i = 0; i < 20000; i++) {
+      const trainingItem =
+        trainingData[Math.floor(Math.random() * trainingData.length)];
+      // Randomly train
+      network.train(trainingItem.input, trainingItem.output);
+    }
+  });
+
+  // after(async () => {
+  //   console.log(JSON.stringify(network, null, 2));
+  // });
+
+  for (const { input, output } of trainingData) {
+    test(`should return [${output}] for a [${input}] input`, () => {
+      network.activate(input);
+      const [sum, carry] = network.runInputSigmoid();
+      equal(Math.round(sum), output[0]);
+      equal(Math.round(carry), output[1]);
+    });
+  }
 });
