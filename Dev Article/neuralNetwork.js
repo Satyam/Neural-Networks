@@ -4,6 +4,7 @@ export class NeuralNetwork {
   #sizes;
   #net;
   #numLayers;
+  #learningRate;
   constructor(...sizes) {
     this.#sizes =
       sizes.length === 1 && Array.isArray(sizes[0]) ? sizes[0] : sizes;
@@ -21,6 +22,7 @@ export class NeuralNetwork {
           )
         : undefined,
     }));
+    this.#learningRate = 1;
   }
 
   get numLayers() {
@@ -41,7 +43,12 @@ export class NeuralNetwork {
   getBiases(numLayer) {
     return this.#net[numLayer].biases;
   }
-
+  get learningRate() {
+    return this.#learningRate;
+  }
+  set learningRate(value) {
+    this.#learningRate = value;
+  }
   toJSON() {
     return {
       numLayers: this.#numLayers,
@@ -151,9 +158,9 @@ export class NeuralNetwork {
     return net.at(-1).layer;
   }
 
-  train(inputs, target, learningRate) {
+  train(inputs, target) {
     this.feedForward(inputs);
-
+    const learningRate = this.#learningRate;
     /*
     Here we are back traking so the prev and next prefixes are backwards.
     Previous items are towards the end of the network, 
