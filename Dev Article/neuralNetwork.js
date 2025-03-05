@@ -5,6 +5,7 @@ export class NeuralNetwork {
   #net;
   #numLayers;
   #learningRate;
+  #momentum;
   constructor(...sizes) {
     this.#sizes =
       sizes.length === 1 && Array.isArray(sizes[0]) ? sizes[0] : sizes;
@@ -21,8 +22,13 @@ export class NeuralNetwork {
             Float64Array.from({ length: this.#sizes[i - 1] }, randomCoeficient)
           )
         : undefined,
+      deltas: new Float64Array(size),
+      changes: Array.from({ length: size }, () =>
+        new Float64Array(this.#sizes[i - 1]).fill(0)
+      ),
     }));
-    this.#learningRate = 1;
+    this.#learningRate = 0.3;
+    this.#momentum = 0.1;
   }
 
   get numLayers() {
@@ -48,6 +54,12 @@ export class NeuralNetwork {
   }
   set learningRate(value) {
     this.#learningRate = value;
+  }
+  get momentum() {
+    return this.#momentum;
+  }
+  set momentum(value) {
+    this.#momentum = value;
   }
   toJSON() {
     return {
@@ -160,37 +172,50 @@ export class NeuralNetwork {
 
   train(inputs, target) {
     this.feedForward(inputs);
-    const learningRate = this.#learningRate;
+    this.#calculateDeltas(inputs, target);
+    this.#applyDeltas();
+  }
+  #calculateDeltas(inputs, target) {
     /*
     Here we are back traking so the prev and next prefixes are backwards.
     Previous items are towards the end of the network, 
     next items are towards the begining.
     */
-    let prevErrors = [];
+    let prevDeltas;
     let prevWeights;
     for (let step = this.#numLayers - 1; step > 0; step--) {
-      const errors = [];
-      const { size, layer, biases, weights } = this.#net[step];
-      const nextLayer = this.#net[step - 1].layer;
+      const { size, layer, weights, deltas } = this.#net[step];
       for (let row = 0; row < size; row++) {
+        const output = layer[row];
         let err = 0;
         if (step == this.#numLayers - 1) {
           err = target[row] - layer[row];
         } else {
-          for (let prevRow = 0; prevRow < prevErrors.length; prevRow++) {
-            err += prevWeights[prevRow][row] * prevErrors[prevRow];
+          for (let prevRow = 0; prevRow < prevDeltas.length; prevRow++) {
+            err += prevWeights[prevRow][row] * prevDeltas[prevRow];
           }
         }
-        errors[row] = err;
-        const correctionFactor =
-          learningRate * err * layer[row] * (1 - layer[row]);
-        for (let nextRow = 0; nextRow < nextLayer.length; nextRow++) {
-          weights[row][nextRow] += correctionFactor * nextLayer[nextRow];
-        }
-        biases[row] += learningRate * err;
+        deltas[row] = err * output * (1 - output);
       }
-      prevErrors = errors;
       prevWeights = weights;
+      prevDeltas = deltas;
+    }
+  }
+  #applyDeltas() {
+    const learningRate = this.#learningRate;
+    const momentum = this.#momentum;
+    for (let step = 1; step < this.#numLayers; step++) {
+      const { size, layer, weights, deltas, changes, biases } = this.#net[step];
+      for (let row = 0; row < size; row++) {
+        const delta = deltas[row];
+        for (let prevRow = 0; prevRow < this.#sizes[step - 1]; prevRow++) {
+          const change =
+            learningRate * delta * layer + momentum * changes[prevRow][row];
+          changes[prevRow][row] = change;
+          weights[prevRow][row] += change;
+        }
+        biases[row] += learningRate * delta;
+      }
     }
   }
 }
