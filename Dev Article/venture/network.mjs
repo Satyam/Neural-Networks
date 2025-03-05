@@ -41,12 +41,12 @@ class Network {
   connectLayers() {
     // Connects current layer with the previous one. This is for a fully connected network
     // (each neuron connects with all the neurons from the previous layer)
-    for (var layer = 1; layer < this.layers.length; layer++) {
+    for (let layer = 1; layer < this.layers.length; layer++) {
       const thisLayer = this.layers[layer];
       const prevLayer = this.layers[layer - 1];
-      for (var neuron = 0; neuron < prevLayer.neurons.length; neuron++) {
+      for (let neuron = 0; neuron < prevLayer.neurons.length; neuron++) {
         for (
-          var neuronInThisLayer = 0;
+          let neuronInThisLayer = 0;
           neuronInThisLayer < thisLayer.neurons.length;
           neuronInThisLayer++
         ) {
@@ -91,9 +91,9 @@ class Network {
   }
 
   runInputSigmoid() {
-    for (var layer = 1; layer < this.layers.length; layer++) {
+    for (let layer = 1; layer < this.layers.length; layer++) {
       for (
-        var neuron = 0;
+        let neuron = 0;
         neuron < this.layers[layer].neurons.length;
         neuron++
       ) {
@@ -125,7 +125,7 @@ class Network {
 
       for (let neuron = 0; neuron < currentLayer.neurons.length; neuron++) {
         const currentNeuron = currentLayer.neurons[neuron];
-        let output = currentNeuron.output;
+        const output = currentNeuron.output;
 
         let error = 0;
         if (layer === this.layers.length - 1) {
@@ -142,7 +142,6 @@ class Network {
             // console.log('calculate delta, error, inner layer', error)
           }
         }
-        currentNeuron.setError(error);
         currentNeuron.setDelta(error * output * (1 - output));
       }
     }
@@ -151,22 +150,20 @@ class Network {
   adjustWeights() {
     // we start adjusting weights from the output layer back to the input layer
     for (let layer = 1; layer <= this.layers.length - 1; layer++) {
-      const prevLayer = this.layers[layer - 1];
       const currentLayer = this.layers[layer];
 
       for (let neuron = 0; neuron < currentLayer.neurons.length; neuron++) {
         const currentNeuron = currentLayer.neurons[neuron];
-        let delta = currentNeuron.delta;
+        const delta = currentNeuron.delta;
 
         for (let i = 0; i < currentNeuron.inputConnections.length; i++) {
           const currentConnection = currentNeuron.inputConnections[i];
-          let change = currentConnection.change;
 
           // The change on the weight of this connection is:
           // the learningRate * the delta of the neuron * the output of the input neuron + (the connection change * momentum)
-          change =
+          const change =
             this.learningRate * delta * currentConnection.from.output +
-            this.momentum * change;
+            this.momentum * currentConnection.change;
 
           currentConnection.setChange(change);
           currentConnection.setWeight(currentConnection.weight + change);

@@ -3,7 +3,7 @@ import Neuron from './neuron.mjs';
 class Layer {
   constructor(numberOfNeurons) {
     const neurons = [];
-    for (var j = 0; j < numberOfNeurons; j++) {
+    for (let j = 0; j < numberOfNeurons; j++) {
       const neuron = new Neuron();
       neurons.push(neuron);
     }
