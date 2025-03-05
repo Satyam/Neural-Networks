@@ -2,7 +2,7 @@ class Connection {
   constructor(from, to) {
     this.from = from;
     this.to = to;
-    this.weight = Math.random();
+    this.weight = 0.5; // Math.random();
     this.change = 0;
   }
 

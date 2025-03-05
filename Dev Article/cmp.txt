@@ -1,0 +1,944 @@
+d.For input [ 0, 0 ] output Float64Array(2) [ 0.6224593312018546, 0.6224593312018546 ] expected [ 0, 0 ]
+d.layer 2 error -0.6224593312018546 delta -0.14628025352695762 change -0.14628025352695762
+d.layer 2 error -0.6224593312018546 delta -0.14628025352695762 change -0.14628025352695762
+from [ 1 , 0 ] to [ 2 , 0 ]
+prevErrors[prevRow] -0.6224593312018546 conn weight 0.4268598732365212 error -0.2657029112117134
+from [ 1 , 0 ] to [ 2 , 1 ]
+prevErrors[prevRow] -0.6224593312018546 conn weight 0.4268598732365212 error -0.5314058224234268
+d.layer 1 error -0.5314058224234268 delta -0.1328514556058567 change -0.1328514556058567
+from [ 1 , 1 ] to [ 2 , 0 ]
+prevErrors[prevRow] -0.6224593312018546 conn weight 0.4268598732365212 error -0.2657029112117134
+from [ 1 , 1 ] to [ 2 , 1 ]
+prevErrors[prevRow] -0.6224593312018546 conn weight 0.4268598732365212 error -0.5314058224234268
+d.layer 1 error -0.5314058224234268 delta -0.1328514556058567 change -0.1328514556058567
+v.For input [ 0, 0 ] output [ 0.6224593312018546, 0.6224593312018546 ] expected [ 0, 0 ]
+v.calculateDeltas
+{
+  "layer": 2,
+  "row": 0,
+  "delta": 0,
+  "output": 0.6224593312018546,
+  "error": 0,
+  "bias": 0
+}
+new error -0.6224593312018546
+new delta -0.14628025352695762
+v.calculateDeltas
+{
+  "layer": 2,
+  "row": 1,
+  "delta": 0,
+  "output": 0.6224593312018546,
+  "error": 0,
+  "bias": 0
+}
+new error -0.6224593312018546
+new delta -0.14628025352695762
+v.calculateDeltas
+{
+  "layer": 1,
+  "row": 0,
+  "delta": 0,
+  "output": 0.5,
+  "error": 0,
+  "bias": 0
+}
+from [ 1 , 0 ] to [ 2 , 0 ]
+to delta -0.14628025352695762 conn weight 0.5 error -0.07314012676347881
+from [ 1 , 0 ] to [ 2 , 1 ]
+to delta -0.14628025352695762 conn weight 0.5 error -0.14628025352695762
+new error -0.14628025352695762
+new delta -0.036570063381739404
+v.calculateDeltas
+{
+  "layer": 1,
+  "row": 1,
+  "delta": 0,
+  "output": 0.5,
+  "error": 0,
+  "bias": 0
+}
+from [ 1 , 1 ] to [ 2 , 0 ]
+to delta -0.14628025352695762 conn weight 0.5 error -0.07314012676347881
+from [ 1 , 1 ] to [ 2 , 1 ]
+to delta -0.14628025352695762 conn weight 0.5 error -0.14628025352695762
+new error -0.14628025352695762
+new delta -0.036570063381739404
+v.calculateDeltas
+{
+  "layer": 0,
+  "row": 0,
+  "delta": 0,
+  "output": 0,
+  "error": 0,
+  "bias": 0
+}
+from [ 0 , 0 ] to [ 1 , 0 ]
+to delta -0.036570063381739404 conn weight 0.5 error -0.018285031690869702
+from [ 0 , 0 ] to [ 1 , 1 ]
+to delta -0.036570063381739404 conn weight 0.5 error -0.036570063381739404
+new error -0.036570063381739404
+new delta -0
+v.calculateDeltas
+{
+  "layer": 0,
+  "row": 1,
+  "delta": 0,
+  "output": 0,
+  "error": 0,
+  "bias": 0
+}
+from [ 0 , 1 ] to [ 1 , 0 ]
+to delta -0.036570063381739404 conn weight 0.5 error -0.018285031690869702
+from [ 0 , 1 ] to [ 1 , 1 ]
+to delta -0.036570063381739404 conn weight 0.5 error -0.036570063381739404
+new error -0.036570063381739404
+new delta -0
+v.adjust
+{
+  "layer": 1,
+  "row": 0,
+  "delta": -0.036570063381739404,
+  "output": 0.5,
+  "error": -0.14628025352695762,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "4cf2895c-8d79-46f7-b974-01b26f7b951e",
+  "to": "36e4b766-99ee-4544-93e5-ed6853f2a5a2"
+}
+set change 0
+set weigth 0.5
+v.adjust
+{
+  "layer": 1,
+  "row": 0,
+  "delta": -0.036570063381739404,
+  "output": 0.5,
+  "error": -0.14628025352695762,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "145eec22-e264-486c-b702-4f90061a47ac",
+  "to": "36e4b766-99ee-4544-93e5-ed6853f2a5a2"
+}
+set change 0
+set weigth 0.5
+set neuron bias -0.036570063381739404
+v.adjust
+{
+  "layer": 1,
+  "row": 1,
+  "delta": -0.036570063381739404,
+  "output": 0.5,
+  "error": -0.14628025352695762,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "4cf2895c-8d79-46f7-b974-01b26f7b951e",
+  "to": "975334a2-aba6-4462-bd7e-326fc2c80a6d"
+}
+set change 0
+set weigth 0.5
+v.adjust
+{
+  "layer": 1,
+  "row": 1,
+  "delta": -0.036570063381739404,
+  "output": 0.5,
+  "error": -0.14628025352695762,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "145eec22-e264-486c-b702-4f90061a47ac",
+  "to": "975334a2-aba6-4462-bd7e-326fc2c80a6d"
+}
+set change 0
+set weigth 0.5
+set neuron bias -0.036570063381739404
+v.adjust
+{
+  "layer": 2,
+  "row": 0,
+  "delta": -0.14628025352695762,
+  "output": 0.6224593312018546,
+  "error": -0.6224593312018546,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "36e4b766-99ee-4544-93e5-ed6853f2a5a2",
+  "to": "fca44dce-9453-41e0-ab1a-452264916013"
+}
+set change -0.07314012676347881
+set weigth 0.4268598732365212
+v.adjust
+{
+  "layer": 2,
+  "row": 0,
+  "delta": -0.14628025352695762,
+  "output": 0.6224593312018546,
+  "error": -0.6224593312018546,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "975334a2-aba6-4462-bd7e-326fc2c80a6d",
+  "to": "fca44dce-9453-41e0-ab1a-452264916013"
+}
+set change -0.07314012676347881
+set weigth 0.4268598732365212
+set neuron bias -0.14628025352695762
+v.adjust
+{
+  "layer": 2,
+  "row": 1,
+  "delta": -0.14628025352695762,
+  "output": 0.6224593312018546,
+  "error": -0.6224593312018546,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "36e4b766-99ee-4544-93e5-ed6853f2a5a2",
+  "to": "441beac8-8fae-4426-9d41-a32b4caedafa"
+}
+set change -0.07314012676347881
+set weigth 0.4268598732365212
+v.adjust
+{
+  "layer": 2,
+  "row": 1,
+  "delta": -0.14628025352695762,
+  "output": 0.6224593312018546,
+  "error": -0.6224593312018546,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "975334a2-aba6-4462-bd7e-326fc2c80a6d",
+  "to": "441beac8-8fae-4426-9d41-a32b4caedafa"
+}
+set change -0.07314012676347881
+set weigth 0.4268598732365212
+set neuron bias -0.14628025352695762
+d.For input [ 0, 1 ] output Float64Array(2) [ 0.6507776782147005, 0.6507776782147005 ] expected [ 1, 0 ]
+d.layer 2 error 0.34922232178529955 delta 0.0793663922247687 change 0.0793663922247687
+d.layer 2 error -0.6507776782147005 delta -0.14789969952741555 change -0.14789969952741555
+from [ 1 , 0 ] to [ 2 , 0 ]
+prevErrors[prevRow] 0.34922232178529955 conn weight 0.5494023514241336 error 0.19186356475863903
+from [ 1 , 0 ] to [ 2 , 1 ]
+prevErrors[prevRow] -0.6507776782147005 conn weight 0.4079384519472097 error -0.07361367385406525
+d.layer 1 error -0.07361367385406525 delta -0.01729948662450279 change -0.01729948662450279
+from [ 1 , 1 ] to [ 2 , 0 ]
+prevErrors[prevRow] 0.34922232178529955 conn weight 0.5494023514241336 error 0.19186356475863903
+from [ 1 , 1 ] to [ 2 , 1 ]
+prevErrors[prevRow] -0.6507776782147005 conn weight 0.4079384519472097 error -0.07361367385406525
+d.layer 1 error -0.07361367385406525 delta -0.01729948662450279 change -0.01729948662450279
+v.For input [ 0, 1 ] output [ 0.6507776782147005, 0.6507776782147005 ] expected [ 1, 0 ]
+v.calculateDeltas
+{
+  "layer": 2,
+  "row": 0,
+  "delta": 0,
+  "output": 0.6507776782147005,
+  "error": 0,
+  "bias": 0
+}
+new error 0.34922232178529955
+new delta 0.0793663922247687
+v.calculateDeltas
+{
+  "layer": 2,
+  "row": 1,
+  "delta": 0,
+  "output": 0.6507776782147005,
+  "error": 0,
+  "bias": 0
+}
+new error -0.6507776782147005
+new delta -0.14789969952741555
+v.calculateDeltas
+{
+  "layer": 1,
+  "row": 0,
+  "delta": 0,
+  "output": 0.6224593312018546,
+  "error": 0,
+  "bias": 0
+}
+from [ 1 , 0 ] to [ 2 , 0 ]
+to delta 0.0793663922247687 conn weight 0.5 error 0.03968319611238435
+from [ 1 , 0 ] to [ 2 , 1 ]
+to delta -0.14789969952741555 conn weight 0.5 error -0.03426665365132343
+new error -0.03426665365132343
+new delta -0.008052790812787328
+v.calculateDeltas
+{
+  "layer": 1,
+  "row": 1,
+  "delta": 0,
+  "output": 0.6224593312018546,
+  "error": 0,
+  "bias": 0
+}
+from [ 1 , 1 ] to [ 2 , 0 ]
+to delta 0.0793663922247687 conn weight 0.5 error 0.03968319611238435
+from [ 1 , 1 ] to [ 2 , 1 ]
+to delta -0.14789969952741555 conn weight 0.5 error -0.03426665365132343
+new error -0.03426665365132343
+new delta -0.008052790812787328
+v.calculateDeltas
+{
+  "layer": 0,
+  "row": 0,
+  "delta": 0,
+  "output": 0,
+  "error": 0,
+  "bias": 0
+}
+from [ 0 , 0 ] to [ 1 , 0 ]
+to delta -0.008052790812787328 conn weight 0.5 error -0.004026395406393664
+from [ 0 , 0 ] to [ 1 , 1 ]
+to delta -0.008052790812787328 conn weight 0.5 error -0.008052790812787328
+new error -0.008052790812787328
+new delta -0
+v.calculateDeltas
+{
+  "layer": 0,
+  "row": 1,
+  "delta": 0,
+  "output": 1,
+  "error": 0,
+  "bias": 0
+}
+from [ 0 , 1 ] to [ 1 , 0 ]
+to delta -0.008052790812787328 conn weight 0.5 error -0.004026395406393664
+from [ 0 , 1 ] to [ 1 , 1 ]
+to delta -0.008052790812787328 conn weight 0.5 error -0.008052790812787328
+new error -0.008052790812787328
+new delta -0
+v.adjust
+{
+  "layer": 1,
+  "row": 0,
+  "delta": -0.008052790812787328,
+  "output": 0.6224593312018546,
+  "error": -0.03426665365132343,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "d2061aae-6d79-45d8-b2f2-419fdf17fde6",
+  "to": "52fbf402-1035-4a2f-b01e-ad087f08b146"
+}
+set change 0
+set weigth 0.5
+v.adjust
+{
+  "layer": 1,
+  "row": 0,
+  "delta": -0.008052790812787328,
+  "output": 0.6224593312018546,
+  "error": -0.03426665365132343,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "99559a1f-2aa7-4b3a-9727-8a6bfe4be84f",
+  "to": "52fbf402-1035-4a2f-b01e-ad087f08b146"
+}
+set change -0.008052790812787328
+set weigth 0.4919472091872127
+set neuron bias -0.008052790812787328
+v.adjust
+{
+  "layer": 1,
+  "row": 1,
+  "delta": -0.008052790812787328,
+  "output": 0.6224593312018546,
+  "error": -0.03426665365132343,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "d2061aae-6d79-45d8-b2f2-419fdf17fde6",
+  "to": "dce6ebea-cbe5-4dab-981f-07a318c03d3e"
+}
+set change 0
+set weigth 0.5
+v.adjust
+{
+  "layer": 1,
+  "row": 1,
+  "delta": -0.008052790812787328,
+  "output": 0.6224593312018546,
+  "error": -0.03426665365132343,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "99559a1f-2aa7-4b3a-9727-8a6bfe4be84f",
+  "to": "dce6ebea-cbe5-4dab-981f-07a318c03d3e"
+}
+set change -0.008052790812787328
+set weigth 0.4919472091872127
+set neuron bias -0.008052790812787328
+v.adjust
+{
+  "layer": 2,
+  "row": 0,
+  "delta": 0.0793663922247687,
+  "output": 0.6507776782147005,
+  "error": 0.34922232178529955,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "52fbf402-1035-4a2f-b01e-ad087f08b146",
+  "to": "84f1e3c0-fddf-42a2-8e7e-201c70fab3f0"
+}
+set change 0.04940235142413359
+set weigth 0.5494023514241336
+v.adjust
+{
+  "layer": 2,
+  "row": 0,
+  "delta": 0.0793663922247687,
+  "output": 0.6507776782147005,
+  "error": 0.34922232178529955,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "dce6ebea-cbe5-4dab-981f-07a318c03d3e",
+  "to": "84f1e3c0-fddf-42a2-8e7e-201c70fab3f0"
+}
+set change 0.04940235142413359
+set weigth 0.5494023514241336
+set neuron bias 0.0793663922247687
+v.adjust
+{
+  "layer": 2,
+  "row": 1,
+  "delta": -0.14789969952741555,
+  "output": 0.6507776782147005,
+  "error": -0.6507776782147005,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "52fbf402-1035-4a2f-b01e-ad087f08b146",
+  "to": "b6376e87-bda4-4012-ba4e-9368d753f5f9"
+}
+set change -0.09206154805279033
+set weigth 0.4079384519472097
+v.adjust
+{
+  "layer": 2,
+  "row": 1,
+  "delta": -0.14789969952741555,
+  "output": 0.6507776782147005,
+  "error": -0.6507776782147005,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "dce6ebea-cbe5-4dab-981f-07a318c03d3e",
+  "to": "b6376e87-bda4-4012-ba4e-9368d753f5f9"
+}
+set change -0.09206154805279033
+set weigth 0.4079384519472097
+set neuron bias -0.14789969952741555
+d.For input [ 1, 0 ] output Float64Array(2) [ 0.6507776782147005, 0.6507776782147005 ] expected [ 1, 0 ]
+d.layer 2 error 0.34922232178529955 delta 0.0793663922247687 change 0.0793663922247687
+d.layer 2 error -0.6507776782147005 delta -0.14789969952741555 change -0.14789969952741555
+from [ 1 , 0 ] to [ 2 , 0 ]
+prevErrors[prevRow] 0.34922232178529955 conn weight 0.5494023514241336 error 0.19186356475863903
+from [ 1 , 0 ] to [ 2 , 1 ]
+prevErrors[prevRow] -0.6507776782147005 conn weight 0.4079384519472097 error -0.07361367385406525
+d.layer 1 error -0.07361367385406525 delta -0.01729948662450279 change -0.01729948662450279
+from [ 1 , 1 ] to [ 2 , 0 ]
+prevErrors[prevRow] 0.34922232178529955 conn weight 0.5494023514241336 error 0.19186356475863903
+from [ 1 , 1 ] to [ 2 , 1 ]
+prevErrors[prevRow] -0.6507776782147005 conn weight 0.4079384519472097 error -0.07361367385406525
+d.layer 1 error -0.07361367385406525 delta -0.01729948662450279 change -0.01729948662450279
+v.For input [ 1, 0 ] output [ 0.6507776782147005, 0.6507776782147005 ] expected [ 1, 0 ]
+v.calculateDeltas
+{
+  "layer": 2,
+  "row": 0,
+  "delta": 0,
+  "output": 0.6507776782147005,
+  "error": 0,
+  "bias": 0
+}
+new error 0.34922232178529955
+new delta 0.0793663922247687
+v.calculateDeltas
+{
+  "layer": 2,
+  "row": 1,
+  "delta": 0,
+  "output": 0.6507776782147005,
+  "error": 0,
+  "bias": 0
+}
+new error -0.6507776782147005
+new delta -0.14789969952741555
+v.calculateDeltas
+{
+  "layer": 1,
+  "row": 0,
+  "delta": 0,
+  "output": 0.6224593312018546,
+  "error": 0,
+  "bias": 0
+}
+from [ 1 , 0 ] to [ 2 , 0 ]
+to delta 0.0793663922247687 conn weight 0.5 error 0.03968319611238435
+from [ 1 , 0 ] to [ 2 , 1 ]
+to delta -0.14789969952741555 conn weight 0.5 error -0.03426665365132343
+new error -0.03426665365132343
+new delta -0.008052790812787328
+v.calculateDeltas
+{
+  "layer": 1,
+  "row": 1,
+  "delta": 0,
+  "output": 0.6224593312018546,
+  "error": 0,
+  "bias": 0
+}
+from [ 1 , 1 ] to [ 2 , 0 ]
+to delta 0.0793663922247687 conn weight 0.5 error 0.03968319611238435
+from [ 1 , 1 ] to [ 2 , 1 ]
+to delta -0.14789969952741555 conn weight 0.5 error -0.03426665365132343
+new error -0.03426665365132343
+new delta -0.008052790812787328
+v.calculateDeltas
+{
+  "layer": 0,
+  "row": 0,
+  "delta": 0,
+  "output": 1,
+  "error": 0,
+  "bias": 0
+}
+from [ 0 , 0 ] to [ 1 , 0 ]
+to delta -0.008052790812787328 conn weight 0.5 error -0.004026395406393664
+from [ 0 , 0 ] to [ 1 , 1 ]
+to delta -0.008052790812787328 conn weight 0.5 error -0.008052790812787328
+new error -0.008052790812787328
+new delta -0
+v.calculateDeltas
+{
+  "layer": 0,
+  "row": 1,
+  "delta": 0,
+  "output": 0,
+  "error": 0,
+  "bias": 0
+}
+from [ 0 , 1 ] to [ 1 , 0 ]
+to delta -0.008052790812787328 conn weight 0.5 error -0.004026395406393664
+from [ 0 , 1 ] to [ 1 , 1 ]
+to delta -0.008052790812787328 conn weight 0.5 error -0.008052790812787328
+new error -0.008052790812787328
+new delta -0
+v.adjust
+{
+  "layer": 1,
+  "row": 0,
+  "delta": -0.008052790812787328,
+  "output": 0.6224593312018546,
+  "error": -0.03426665365132343,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "264b8b51-e444-427f-98a7-1fedbc604487",
+  "to": "f3a404bb-8d18-4eef-adfe-4d28dae11e2c"
+}
+set change -0.008052790812787328
+set weigth 0.4919472091872127
+v.adjust
+{
+  "layer": 1,
+  "row": 0,
+  "delta": -0.008052790812787328,
+  "output": 0.6224593312018546,
+  "error": -0.03426665365132343,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "e316d099-9fdb-427c-8980-873898716df2",
+  "to": "f3a404bb-8d18-4eef-adfe-4d28dae11e2c"
+}
+set change 0
+set weigth 0.5
+set neuron bias -0.008052790812787328
+v.adjust
+{
+  "layer": 1,
+  "row": 1,
+  "delta": -0.008052790812787328,
+  "output": 0.6224593312018546,
+  "error": -0.03426665365132343,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "264b8b51-e444-427f-98a7-1fedbc604487",
+  "to": "0f83d67c-68f4-4666-bb7c-e8e52999c53f"
+}
+set change -0.008052790812787328
+set weigth 0.4919472091872127
+v.adjust
+{
+  "layer": 1,
+  "row": 1,
+  "delta": -0.008052790812787328,
+  "output": 0.6224593312018546,
+  "error": -0.03426665365132343,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "e316d099-9fdb-427c-8980-873898716df2",
+  "to": "0f83d67c-68f4-4666-bb7c-e8e52999c53f"
+}
+set change 0
+set weigth 0.5
+set neuron bias -0.008052790812787328
+v.adjust
+{
+  "layer": 2,
+  "row": 0,
+  "delta": 0.0793663922247687,
+  "output": 0.6507776782147005,
+  "error": 0.34922232178529955,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "f3a404bb-8d18-4eef-adfe-4d28dae11e2c",
+  "to": "d064251a-2688-43d8-8f25-83beb673c617"
+}
+set change 0.04940235142413359
+set weigth 0.5494023514241336
+v.adjust
+{
+  "layer": 2,
+  "row": 0,
+  "delta": 0.0793663922247687,
+  "output": 0.6507776782147005,
+  "error": 0.34922232178529955,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "0f83d67c-68f4-4666-bb7c-e8e52999c53f",
+  "to": "d064251a-2688-43d8-8f25-83beb673c617"
+}
+set change 0.04940235142413359
+set weigth 0.5494023514241336
+set neuron bias 0.0793663922247687
+v.adjust
+{
+  "layer": 2,
+  "row": 1,
+  "delta": -0.14789969952741555,
+  "output": 0.6507776782147005,
+  "error": -0.6507776782147005,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "f3a404bb-8d18-4eef-adfe-4d28dae11e2c",
+  "to": "02a6b9a6-a360-4b71-8aae-0a2b93743080"
+}
+set change -0.09206154805279033
+set weigth 0.4079384519472097
+v.adjust
+{
+  "layer": 2,
+  "row": 1,
+  "delta": -0.14789969952741555,
+  "output": 0.6507776782147005,
+  "error": -0.6507776782147005,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "0f83d67c-68f4-4666-bb7c-e8e52999c53f",
+  "to": "02a6b9a6-a360-4b71-8aae-0a2b93743080"
+}
+set change -0.09206154805279033
+set weigth 0.4079384519472097
+set neuron bias -0.14789969952741555
+d.For input [ 1, 1 ] output Float64Array(2) [ 0.6750375273768237, 0.6750375273768237 ] expected [ 0, 1 ]
+d.layer 2 error -0.6750375273768237 delta -0.14807749028195163 change -0.14807749028195163
+d.layer 2 error 0.32496247262317635 delta 0.07128437372785607 change 0.07128437372785607
+from [ 1 , 0 ] to [ 2 , 0 ]
+prevErrors[prevRow] -0.6750375273768237 conn weight 0.3917466804273781 error -0.264443710513776
+from [ 1 , 0 ] to [ 2 , 1 ]
+prevErrors[prevRow] 0.32496247262317635 conn weight 0.5521130529360165 error -0.08502768766415744
+d.layer 1 error -0.08502768766415744 delta -0.016717458050702894 change -0.016717458050702894
+from [ 1 , 1 ] to [ 2 , 0 ]
+prevErrors[prevRow] -0.6750375273768237 conn weight 0.3917466804273781 error -0.264443710513776
+from [ 1 , 1 ] to [ 2 , 1 ]
+prevErrors[prevRow] 0.32496247262317635 conn weight 0.5521130529360165 error -0.08502768766415744
+d.layer 1 error -0.08502768766415744 delta -0.016717458050702894 change -0.016717458050702894
+v.For input [ 1, 1 ] output [ 0.6750375273768237, 0.6750375273768237 ] expected [ 0, 1 ]
+v.calculateDeltas
+{
+  "layer": 2,
+  "row": 0,
+  "delta": 0,
+  "output": 0.6750375273768237,
+  "error": 0,
+  "bias": 0
+}
+new error -0.6750375273768237
+new delta -0.14807749028195163
+v.calculateDeltas
+{
+  "layer": 2,
+  "row": 1,
+  "delta": 0,
+  "output": 0.6750375273768237,
+  "error": 0,
+  "bias": 0
+}
+new error 0.32496247262317635
+new delta 0.07128437372785607
+v.calculateDeltas
+{
+  "layer": 1,
+  "row": 0,
+  "delta": 0,
+  "output": 0.7310585786300049,
+  "error": 0,
+  "bias": 0
+}
+from [ 1 , 0 ] to [ 2 , 0 ]
+to delta -0.14807749028195163 conn weight 0.5 error -0.07403874514097582
+from [ 1 , 0 ] to [ 2 , 1 ]
+to delta 0.07128437372785607 conn weight 0.5 error -0.038396558277047785
+new error -0.038396558277047785
+new delta -0.007549221552669586
+v.calculateDeltas
+{
+  "layer": 1,
+  "row": 1,
+  "delta": 0,
+  "output": 0.7310585786300049,
+  "error": 0,
+  "bias": 0
+}
+from [ 1 , 1 ] to [ 2 , 0 ]
+to delta -0.14807749028195163 conn weight 0.5 error -0.07403874514097582
+from [ 1 , 1 ] to [ 2 , 1 ]
+to delta 0.07128437372785607 conn weight 0.5 error -0.038396558277047785
+new error -0.038396558277047785
+new delta -0.007549221552669586
+v.calculateDeltas
+{
+  "layer": 0,
+  "row": 0,
+  "delta": 0,
+  "output": 1,
+  "error": 0,
+  "bias": 0
+}
+from [ 0 , 0 ] to [ 1 , 0 ]
+to delta -0.007549221552669586 conn weight 0.5 error -0.003774610776334793
+from [ 0 , 0 ] to [ 1 , 1 ]
+to delta -0.007549221552669586 conn weight 0.5 error -0.007549221552669586
+new error -0.007549221552669586
+new delta -0
+v.calculateDeltas
+{
+  "layer": 0,
+  "row": 1,
+  "delta": 0,
+  "output": 1,
+  "error": 0,
+  "bias": 0
+}
+from [ 0 , 1 ] to [ 1 , 0 ]
+to delta -0.007549221552669586 conn weight 0.5 error -0.003774610776334793
+from [ 0 , 1 ] to [ 1 , 1 ]
+to delta -0.007549221552669586 conn weight 0.5 error -0.007549221552669586
+new error -0.007549221552669586
+new delta -0
+v.adjust
+{
+  "layer": 1,
+  "row": 0,
+  "delta": -0.007549221552669586,
+  "output": 0.7310585786300049,
+  "error": -0.038396558277047785,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "2b0fc4c5-9540-4076-a07e-d1ab4de7bb28",
+  "to": "03c82357-cd1c-4758-957f-2f0c39ec2122"
+}
+set change -0.007549221552669586
+set weigth 0.49245077844733043
+v.adjust
+{
+  "layer": 1,
+  "row": 0,
+  "delta": -0.007549221552669586,
+  "output": 0.7310585786300049,
+  "error": -0.038396558277047785,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "f037eb3d-97c0-46e1-b118-d506b390be73",
+  "to": "03c82357-cd1c-4758-957f-2f0c39ec2122"
+}
+set change -0.007549221552669586
+set weigth 0.49245077844733043
+set neuron bias -0.007549221552669586
+v.adjust
+{
+  "layer": 1,
+  "row": 1,
+  "delta": -0.007549221552669586,
+  "output": 0.7310585786300049,
+  "error": -0.038396558277047785,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "2b0fc4c5-9540-4076-a07e-d1ab4de7bb28",
+  "to": "2529735e-c96f-4628-bf98-da1b857dca51"
+}
+set change -0.007549221552669586
+set weigth 0.49245077844733043
+v.adjust
+{
+  "layer": 1,
+  "row": 1,
+  "delta": -0.007549221552669586,
+  "output": 0.7310585786300049,
+  "error": -0.038396558277047785,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "f037eb3d-97c0-46e1-b118-d506b390be73",
+  "to": "2529735e-c96f-4628-bf98-da1b857dca51"
+}
+set change -0.007549221552669586
+set weigth 0.49245077844733043
+set neuron bias -0.007549221552669586
+v.adjust
+{
+  "layer": 2,
+  "row": 0,
+  "delta": -0.14807749028195163,
+  "output": 0.6750375273768237,
+  "error": -0.6750375273768237,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "03c82357-cd1c-4758-957f-2f0c39ec2122",
+  "to": "e2232322-d980-491e-87eb-f88432bf224c"
+}
+set change -0.10825331957262192
+set weigth 0.3917466804273781
+v.adjust
+{
+  "layer": 2,
+  "row": 0,
+  "delta": -0.14807749028195163,
+  "output": 0.6750375273768237,
+  "error": -0.6750375273768237,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "2529735e-c96f-4628-bf98-da1b857dca51",
+  "to": "e2232322-d980-491e-87eb-f88432bf224c"
+}
+set change -0.10825331957262192
+set weigth 0.3917466804273781
+set neuron bias -0.14807749028195163
+v.adjust
+{
+  "layer": 2,
+  "row": 1,
+  "delta": 0.07128437372785607,
+  "output": 0.6750375273768237,
+  "error": 0.32496247262317635,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "03c82357-cd1c-4758-957f-2f0c39ec2122",
+  "to": "12dc2967-357f-4994-b4f1-ddc51b1ca6f4"
+}
+set change 0.05211305293601652
+set weigth 0.5521130529360165
+v.adjust
+{
+  "layer": 2,
+  "row": 1,
+  "delta": 0.07128437372785607,
+  "output": 0.6750375273768237,
+  "error": 0.32496247262317635,
+  "bias": 0
+}
+{
+  "change": 0,
+  "weight": 0.5,
+  "from": "2529735e-c96f-4628-bf98-da1b857dca51",
+  "to": "12dc2967-357f-4994-b4f1-ddc51b1ca6f4"
+}
+set change 0.05211305293601652
+set weigth 0.5521130529360165
+set neuron bias 0.07128437372785607

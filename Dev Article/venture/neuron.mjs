@@ -13,13 +13,15 @@ class Neuron {
 
   toJSON() {
     return {
-      id: this.id,
+      layer: this.layer,
+      row: this.row,
+      // id: this.id,
       delta: this.delta,
       output: this.output,
       error: this.error,
       bias: this.bias,
-      inputConnections: this.inputConnections.map((i) => i.toJSON()),
-      outputConnections: this.outputConnections.map((i) => i.toJSON()),
+      // inputConnections: this.inputConnections.map((i) => i.toJSON()),
+      // outputConnections: this.outputConnections.map((i) => i.toJSON()),
     };
   }
 

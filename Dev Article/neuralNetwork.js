@@ -11,13 +11,15 @@ export class NeuralNetwork {
     this.#net = this.#sizes.map((size, i) => ({
       size,
       biases: i
-        ? Float64Array.from({ length: size }, randomCoeficient)
+        ? // ? Float64Array.from({ length: size }, randomCoeficient)
+          new Float64Array(size).fill(0)
         : undefined,
       layer: new Float64Array(size),
       // weights represent how to reach this layer from the previous.
       weights: i
         ? Array.from({ length: size }, () =>
-            Float64Array.from({ length: this.#sizes[i - 1] }, randomCoeficient)
+            //     Float64Array.from({ length: this.#sizes[i - 1] }, randomCoeficient)
+            new Float64Array(this.#sizes[i - 1]).fill(0.5)
           )
         : undefined,
     }));
@@ -154,6 +156,14 @@ export class NeuralNetwork {
   train(inputs, target, learningRate) {
     this.feedForward(inputs);
 
+    console.log(
+      'd.For input',
+      inputs,
+      'output',
+      this.getLayer(this.numLayers - 1),
+      'expected',
+      target
+    );
     /*
     Here we are back traking so the prev and next prefixes are backwards.
     Previous items are towards the end of the network, 
@@ -171,12 +181,42 @@ export class NeuralNetwork {
           err = target[row] - layer[row];
         } else {
           for (let prevRow = 0; prevRow < prevErrors.length; prevRow++) {
+            console.log(
+              'from [',
+              step,
+              ',',
+              row,
+              '] to [',
+              step + 1,
+              ',',
+              prevRow,
+              ']'
+            );
+
             err += prevWeights[prevRow][row] * prevErrors[prevRow];
+            console.log(
+              'prevErrors[prevRow]',
+              prevErrors[prevRow],
+              'conn weight',
+              prevWeights[prevRow][row],
+              'error',
+              err
+            );
           }
         }
         errors[row] = err;
         const correctionFactor =
           learningRate * err * layer[row] * (1 - layer[row]);
+        console.log(
+          'd.layer',
+          step,
+          'error',
+          err,
+          'delta',
+          err * layer[row] * (1 - layer[row]),
+          'change',
+          correctionFactor
+        );
         for (let nextRow = 0; nextRow < nextLayer.length; nextRow++) {
           weights[row][nextRow] += correctionFactor * nextLayer[nextRow];
         }

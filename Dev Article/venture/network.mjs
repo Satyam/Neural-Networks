@@ -7,11 +7,13 @@ class Network {
     // Create a network with a number of layers. For layers different than the input layer we add a random Bias to each neuron
     this.layers = numberOfLayers.map((length, index) => {
       const layer = new Layer(length);
-      if (index !== 0) {
-        layer.neurons.forEach((neuron) => {
-          neuron.setBias(neuron.getRandomBias());
-        });
-      }
+      // if (index !== 0) {
+      layer.neurons.forEach((neuron, row) => {
+        neuron.setBias(0); //neuron.getRandomBias());
+        neuron.layer = index;
+        neuron.row = row;
+      });
+      // }
       return layer;
     });
 
@@ -69,6 +71,14 @@ class Network {
     // Forward propagate
     this.runInputSigmoid();
 
+    console.log(
+      'v.For input',
+      input,
+      'output',
+      this.layers[this.layers.length - 1].neurons.map((n) => n.output),
+      'expected',
+      output
+    );
     // backpropagate
     this.calculateDeltasSigmoid(output);
     this.adjustWeights();
@@ -125,6 +135,8 @@ class Network {
 
       for (let neuron = 0; neuron < currentLayer.neurons.length; neuron++) {
         const currentNeuron = currentLayer.neurons[neuron];
+        console.log('v.calculateDeltas');
+        console.log(JSON.stringify(currentNeuron, null, 2));
         let output = currentNeuron.output;
 
         let error = 0;
@@ -138,11 +150,32 @@ class Network {
           // the error is the sum of all the products of the output connection neurons * the connections weight
           for (let k = 0; k < currentNeuron.outputConnections.length; k++) {
             const currentConnection = currentNeuron.outputConnections[k];
+            console.log(
+              'from [',
+              currentNeuron.layer,
+              ',',
+              currentNeuron.row,
+              '] to [',
+              currentConnection.to.layer,
+              ',',
+              currentConnection.to.row,
+              ']'
+            );
             error += currentConnection.to.delta * currentConnection.weight;
+            console.log(
+              'to delta',
+              currentConnection.to.delta,
+              'conn weight',
+              currentConnection.weight,
+              'error',
+              error
+            );
             // console.log('calculate delta, error, inner layer', error)
           }
         }
+        console.log('new error', error);
         currentNeuron.setError(error);
+        console.log('new delta', error * output * (1 - output));
         currentNeuron.setDelta(error * output * (1 - output));
       }
     }
@@ -167,11 +200,19 @@ class Network {
           change =
             this.learningRate * delta * currentConnection.from.output +
             this.momentum * change;
-
+          // console.log('v.layer', layer, 'delta', delta, 'change', change);
+          console.log('v.adjust');
+          console.log(JSON.stringify(currentNeuron, null, 2));
+          console.log(JSON.stringify(currentConnection, null, 2));
+          console.log('set change', change);
+          console.log('set weigth', currentConnection.weight + change);
           currentConnection.setChange(change);
           currentConnection.setWeight(currentConnection.weight + change);
         }
-
+        console.log(
+          'set neuron bias',
+          currentNeuron.bias + this.learningRate * delta
+        );
         currentNeuron.setBias(currentNeuron.bias + this.learningRate * delta);
       }
     }
